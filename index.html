@@ -26,292 +26,172 @@
 
 
 body{
-
   margin:0;
-
   font-family:
     system-ui,
     -apple-system,
     Segoe UI,
     Roboto,
     sans-serif;
-
   background:#f3f4f6;
-
   color:#111827
-
 }
 
 
 .app{
-
   max-width:720px;
-
   margin:auto;
-
   min-height:100vh;
-
   padding:20px
-
 }
 
 
 .top{
-
   display:flex;
-
   justify-content:space-between;
-
   align-items:center;
-
   margin-bottom:20px
-
 }
 
 
 h1{
-
   font-size:30px;
-
   margin:8px 0
-
 }
 
 
 h2{
-
   font-size:22px;
-
   margin:8px 0
-
 }
 
 
 .muted{
-
   color:#6b7280
-
 }
 
 
 .card{
-
   background:white;
-
   border-radius:18px;
-
   padding:20px;
-
   margin:14px 0;
-
   box-shadow:0 5px 20px #0000000d
-
 }
 
 
 .btn{
-
   width:100%;
-
   border:0;
-
   border-radius:12px;
-
   padding:14px 16px;
-
   font-size:16px;
-
   font-weight:700;
-
   cursor:pointer;
-
   background:#111827;
-
   color:white;
-
   margin-top:12px
-
 }
 
 
 .btn.secondary{
-
   background:#e5e7eb;
-
   color:#111827
-
 }
 
 
 .btn:disabled{
-
   opacity:.45;
-
   cursor:not-allowed
-
 }
 
 
 .option{
-
   display:flex;
-
   align-items:flex-start;
-
   gap:12px;
-
   padding:14px;
-
   border:2px solid #e5e7eb;
-
   border-radius:12px;
-
   margin:10px 0;
-
   cursor:pointer
-
 }
 
 
 .option.selected{
-
   border-color:#111827;
-
   background:#f9fafb
-
 }
 
 
 .option input{
-
   margin-top:3px;
-
   transform:scale(1.2)
-
 }
 
 
 .progress{
-
   height:8px;
-
   background:#e5e7eb;
-
   border-radius:99px;
-
   overflow:hidden;
-
   margin:15px 0
-
 }
 
 
 .bar{
-
   height:100%;
-
   background:#111827;
-
   width:0
-
 }
 
 
 .badge{
-
   display:inline-block;
-
   background:#e5e7eb;
-
   border-radius:99px;
-
   padding:5px 9px;
-
   font-size:12px;
-
   font-weight:700
-
 }
 
 
 .score{
-
   font-size:48px;
-
   font-weight:800;
-
   text-align:center;
-
   margin:20px 0
-
 }
 
 
 .hidden{
-
   display:none
-
-}
-
-
-.row{
-
-  display:flex;
-
-  gap:10px
-
-}
-
-
-.row .btn{
-
-  flex:1
-
 }
 
 
 .small{
-
   font-size:13px
-
-}
-
-
-.correct{
-
-  border-color:#16a34a!important;
-
-  background:#f0fdf4
-
-}
-
-
-.wrong{
-
-  border-color:#dc2626!important;
-
-  background:#fef2f2
-
 }
 
 
 .error{
-
   color:#dc2626;
-
   font-weight:600
-
 }
 
 
 .loading{
-
   text-align:center;
-
   padding:30px 10px;
-
   color:#6b7280
+}
 
+
+.status{
+  font-size:12px;
+  color:#6b7280;
+  margin-top:8px;
+  text-align:center
 }
 
 </style>
@@ -370,6 +250,12 @@ h2{
       </div>
 
     </div>
+
+
+    <div
+      id="status"
+      class="status"
+    ></div>
 
   </section>
 
@@ -463,8 +349,6 @@ h2{
       ></p>
 
 
-      <!-- FALSCHE FRAGEN -->
-
       <div id="wrongQuestions"></div>
 
 
@@ -509,6 +393,14 @@ const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVy9kNb6JPXKhhKto_6tauXelFzXS4xOP61q-kaoqzvwVAE628_hXk26SZ-QP4sVQ5j1RiqO0cxxVn/pub?gid=0&single=true&output=csv";
 
 
+/* =========================================================
+   CACHE
+   ========================================================= */
+
+
+const CACHE_KEY =
+  "quiz_training_questions_v1";
+
 
 /* =========================================================
    QUIZ VARIABLEN
@@ -530,7 +422,7 @@ let wrongQuestions = [];
 
 
 /* =========================================================
-   HTML ELEMENT KURZ AUFRUFEN
+   HTML ELEMENT
    ========================================================= */
 
 
@@ -540,7 +432,7 @@ const $ = id =>
 
 
 /* =========================================================
-   ARRAY ZUFÄLLIG MISCHEN
+   ARRAY MISCHEN
    ========================================================= */
 
 
@@ -561,8 +453,8 @@ function shuffle(array){
       );
 
 
-    [arr[i],arr[j]] =
-      [arr[j],arr[i]];
+    [arr[i], arr[j]] =
+      [arr[j], arr[i]];
 
   }
 
@@ -600,10 +492,6 @@ function parseCSV(text){
     const next = text[i + 1];
 
 
-    /*
-     * Doppelte Anführungszeichen
-     */
-
     if(
       char === '"' &&
       insideQuotes &&
@@ -617,11 +505,6 @@ function parseCSV(text){
     }
 
 
-    /*
-     * Anführungszeichen öffnen
-     * oder schliessen
-     */
-
     else if(char === '"'){
 
       insideQuotes =
@@ -629,11 +512,6 @@ function parseCSV(text){
 
     }
 
-
-    /*
-     * Komma ausserhalb
-     * von Anführungszeichen
-     */
 
     else if(
       char === ',' &&
@@ -646,10 +524,6 @@ function parseCSV(text){
 
     }
 
-
-    /*
-     * Neue Zeile
-     */
 
     else if(
       (char === '\n' ||
@@ -697,10 +571,6 @@ function parseCSV(text){
   }
 
 
-  /*
-   * Letzte Zeile
-   */
-
   if(
     cell !== "" ||
     row.length > 0
@@ -729,18 +599,394 @@ function parseCSV(text){
 
 
 /* =========================================================
-   GOOGLE SHEET LADEN
+   GOOGLE SHEET IN QUIZZES UMWANDELN
    ========================================================= */
 
 
-async function loadQuestions(){
+function buildQuizzes(csv){
+
+  const rows =
+    parseCSV(csv);
+
+
+  if(rows.length < 2){
+
+    throw new Error(
+      "Das Google Sheet enthält keine Fragen."
+    );
+
+  }
+
+
+  const headers =
+    rows[0].map(
+      x =>
+        x
+          .trim()
+          .toLowerCase()
+    );
+
+
+  const quizIndex =
+    headers.indexOf("quiz");
+
+  const questionIndex =
+    headers.indexOf("question");
+
+  const typeIndex =
+    headers.indexOf("type");
+
+  const aIndex =
+    headers.indexOf("a");
+
+  const bIndex =
+    headers.indexOf("b");
+
+  const cIndex =
+    headers.indexOf("c");
+
+  const dIndex =
+    headers.indexOf("d");
+
+  const correctIndex =
+    headers.indexOf("correct");
+
+  const pointsIndex =
+    headers.indexOf("points");
+
+
+  if(
+    quizIndex === -1 ||
+    questionIndex === -1 ||
+    typeIndex === -1 ||
+    correctIndex === -1
+  ){
+
+    throw new Error(
+      "Benötigte Spalten fehlen: quiz, question, type, correct"
+    );
+
+  }
+
+
+  const questions =
+
+    rows
+      .slice(1)
+      .map(row => {
+
+
+        const options = [];
+
+
+        if(
+          aIndex !== -1 &&
+          row[aIndex] &&
+          row[aIndex].trim() !== ""
+        ){
+
+          options.push({
+
+            id:"A",
+
+            text:
+              row[aIndex].trim()
+
+          });
+
+        }
+
+
+        if(
+          bIndex !== -1 &&
+          row[bIndex] &&
+          row[bIndex].trim() !== ""
+        ){
+
+          options.push({
+
+            id:"B",
+
+            text:
+              row[bIndex].trim()
+
+          });
+
+        }
+
+
+        if(
+          cIndex !== -1 &&
+          row[cIndex] &&
+          row[cIndex].trim() !== ""
+        ){
+
+          options.push({
+
+            id:"C",
+
+            text:
+              row[cIndex].trim()
+
+          });
+
+        }
+
+
+        if(
+          dIndex !== -1 &&
+          row[dIndex] &&
+          row[dIndex].trim() !== ""
+        ){
+
+          options.push({
+
+            id:"D",
+
+            text:
+              row[dIndex].trim()
+
+          });
+
+        }
+
+
+        const correct =
+
+          row[correctIndex]
+
+            ? row[correctIndex]
+
+                .split(",")
+
+                .map(
+                  x =>
+                    x
+                      .trim()
+                      .toUpperCase()
+                )
+
+                .filter(Boolean)
+
+            : [];
+
+
+        return {
+
+          quiz:
+            row[quizIndex]
+              ? row[quizIndex].trim()
+              : "",
+
+
+          question:
+            row[questionIndex]
+              ? row[questionIndex].trim()
+              : "",
+
+
+          type:
+            row[typeIndex]
+              ? row[typeIndex]
+                  .trim()
+                  .toLowerCase()
+              : "single",
+
+
+          options: options,
+
+
+          correct: correct,
+
+
+          points:
+
+            row[pointsIndex] &&
+            !isNaN(
+              Number(
+                row[pointsIndex]
+              )
+            )
+
+              ? Number(
+                  row[pointsIndex]
+                )
+
+              : 1
+
+        };
+
+      })
+
+
+      .filter(q =>
+
+        q.quiz &&
+        q.question &&
+        q.options.length > 0 &&
+        q.correct.length > 0
+
+      );
+
+
+  const quizMap = {};
+
+
+  questions.forEach(q => {
+
+    if(
+      !quizMap[q.quiz]
+    ){
+
+      quizMap[q.quiz] = [];
+
+    }
+
+
+    quizMap[q.quiz].push({
+
+      question:q.question,
+
+      type:q.type,
+
+      options:q.options,
+
+      correct:q.correct,
+
+      points:q.points
+
+    });
+
+  });
+
+
+  return Object.keys(
+    quizMap
+  ).map(quizName => ({
+
+    id:
+
+      quizName
+        .toLowerCase()
+        .replace(
+          /[^a-z0-9äöü]+/gi,
+          "-"
+        ),
+
+
+    title:
+      quizName,
+
+
+    description:
+      quizName +
+      " – Grundlagen",
+
+
+    active:true,
+
+
+    questions:
+      quizMap[quizName]
+
+  }));
+
+}
+
+
+
+/* =========================================================
+   QUIZ AUS CACHE LADEN
+   ========================================================= */
+
+
+function loadFromCache(){
+
+  try{
+
+    const cached =
+      localStorage.getItem(
+        CACHE_KEY
+      );
+
+
+    if(!cached){
+
+      return false;
+
+    }
+
+
+    const data =
+      JSON.parse(cached);
+
+
+    if(
+      !Array.isArray(data) ||
+      data.length === 0
+    ){
+
+      return false;
+
+    }
+
+
+    QUIZZES = data;
+
+
+    console.log(
+      "Quiz aus Cache geladen."
+    );
+
+
+    return true;
+
+  }
+
+  catch(error){
+
+    console.warn(
+      "Cache konnte nicht gelesen werden.",
+      error
+    );
+
+
+    return false;
+
+  }
+
+}
+
+
+
+/* =========================================================
+   GOOGLE SHEET AKTUALISIEREN
+   ========================================================= */
+
+
+async function updateFromGoogle(){
 
   try{
 
 
+    /*
+     * Cache Busting:
+     * verhindert, dass der Browser
+     * eine alte CSV Version verwendet.
+     */
+
+    const url =
+      SHEET_URL +
+      "&t=" +
+      Date.now();
+
+
     const response =
       await fetch(
-        SHEET_URL
+        url,
+        {
+          cache:"no-store"
+        }
       );
 
 
@@ -757,416 +1003,176 @@ async function loadQuestions(){
       await response.text();
 
 
-    const rows =
-      parseCSV(csv);
+    const newQuizzes =
+      buildQuizzes(csv);
 
-
-    if(rows.length < 2){
-
-      throw new Error(
-        "Das Google Sheet enthält keine Fragen."
-      );
-
-    }
-
-
-    /*
-     * Spaltennamen
-     */
-
-    const headers =
-      rows[0].map(
-        x =>
-          x
-            .trim()
-            .toLowerCase()
-      );
-
-
-    /*
-     * Spaltenpositionen
-     */
-
-    const quizIndex =
-      headers.indexOf("quiz");
-
-    const questionIndex =
-      headers.indexOf("question");
-
-    const typeIndex =
-      headers.indexOf("type");
-
-    const aIndex =
-      headers.indexOf("a");
-
-    const bIndex =
-      headers.indexOf("b");
-
-    const cIndex =
-      headers.indexOf("c");
-
-    const dIndex =
-      headers.indexOf("d");
-
-    const correctIndex =
-      headers.indexOf("correct");
-
-    const pointsIndex =
-      headers.indexOf("points");
-
-
-    /*
-     * Pflichtfelder prüfen
-     */
 
     if(
-      quizIndex === -1 ||
-      questionIndex === -1 ||
-      typeIndex === -1 ||
-      correctIndex === -1
+      !newQuizzes.length
     ){
 
       throw new Error(
-
-        "Die Spalten müssen mindestens " +
-        "quiz, question, type und correct enthalten."
-
+        "Keine gültigen Quizze gefunden."
       );
 
     }
 
 
     /*
-     * Fragen erstellen
-     */
-
-    const questions =
-
-      rows
-
-        .slice(1)
-
-        .map(row => {
-
-
-          const options = [];
-
-
-          /*
-           * Antwort A
-           */
-
-          if(
-            aIndex !== -1 &&
-            row[aIndex] &&
-            row[aIndex].trim() !== ""
-          ){
-
-            options.push({
-
-              id:"A",
-
-              text:
-                row[aIndex].trim()
-
-            });
-
-          }
-
-
-          /*
-           * Antwort B
-           */
-
-          if(
-            bIndex !== -1 &&
-            row[bIndex] &&
-            row[bIndex].trim() !== ""
-          ){
-
-            options.push({
-
-              id:"B",
-
-              text:
-                row[bIndex].trim()
-
-            });
-
-          }
-
-
-          /*
-           * Antwort C
-           */
-
-          if(
-            cIndex !== -1 &&
-            row[cIndex] &&
-            row[cIndex].trim() !== ""
-          ){
-
-            options.push({
-
-              id:"C",
-
-              text:
-                row[cIndex].trim()
-
-            });
-
-          }
-
-
-          /*
-           * Antwort D
-           */
-
-          if(
-            dIndex !== -1 &&
-            row[dIndex] &&
-            row[dIndex].trim() !== ""
-          ){
-
-            options.push({
-
-              id:"D",
-
-              text:
-                row[dIndex].trim()
-
-            });
-
-          }
-
-
-          /*
-           * Richtige Antworten
-           */
-
-          const correct =
-
-            row[correctIndex]
-
-              ? row[correctIndex]
-
-                  .split(",")
-
-                  .map(
-                    x =>
-                      x
-                        .trim()
-                        .toUpperCase()
-                  )
-
-                  .filter(Boolean)
-
-              : [];
-
-
-          /*
-           * Frage
-           */
-
-          return {
-
-            quiz:
-              row[quizIndex]
-                ? row[quizIndex].trim()
-                : "",
-
-
-            question:
-              row[questionIndex]
-                ? row[questionIndex].trim()
-                : "",
-
-
-            type:
-              row[typeIndex]
-                ? row[typeIndex]
-                    .trim()
-                    .toLowerCase()
-                : "single",
-
-
-            options: options,
-
-
-            options,
-
-
-            correct,
-
-
-            points:
-
-              row[pointsIndex] &&
-              !isNaN(
-                Number(
-                  row[pointsIndex]
-                )
-              )
-
-                ? Number(
-                    row[pointsIndex]
-                  )
-
-                : 1
-
-          };
-
-        })
-
-
-        /*
-         * Leere Zeilen ignorieren
-         */
-
-        .filter(q =>
-
-          q.quiz &&
-          q.question &&
-          q.options.length > 0 &&
-          q.correct.length > 0
-
-        );
-
-
-    /*
-     * Quiz Kategorien erstellen
-     */
-
-    const quizMap = {};
-
-
-    questions.forEach(q => {
-
-      if(
-        !quizMap[q.quiz]
-      ){
-
-        quizMap[q.quiz] = [];
-
-      }
-
-
-      quizMap[q.quiz].push({
-
-        question:q.question,
-
-        type:q.type,
-
-        options:q.options,
-
-        correct:q.correct,
-
-        points:q.points
-
-      });
-
-    });
-
-
-    /*
-     * QUIZZES erstellen
+     * Neue Daten übernehmen
      */
 
     QUIZZES =
-
-      Object.keys(
-        quizMap
-      )
-
-      .map(
-        quizName => ({
-
-          id:
-            quizName
-              .toLowerCase()
-              .replace(
-                /[^a-z0-9äöü]+/gi,
-                "-"
-              ),
-
-
-          title:
-            quizName,
-
-
-          description:
-            quizName +
-            " – Grundlagen",
-
-
-          active:true,
-
-
-          questions:
-            quizMap[quizName]
-
-        })
-      );
+      newQuizzes;
 
 
     /*
-     * Kontrolle in Console
+     * Im Browser speichern
      */
 
+    localStorage.setItem(
+
+      CACHE_KEY,
+
+      JSON.stringify(
+        QUIZZES
+      )
+
+    );
+
+
     console.log(
-      "Google Sheet geladen:",
-      QUIZZES
+      "Google Sheet aktualisiert."
     );
 
 
     /*
-     * Startseite anzeigen
+     * Anzeige aktualisieren,
+     * aber nur wenn wir gerade
+     * auf der Startseite sind.
      */
+
+    if(
+      !$('home').classList.contains(
+        'hidden'
+      )
+    ){
+
+      renderHome();
+
+    }
+
+
+    $('status').textContent =
+      "Fragen aktualisiert";
+
+
+    setTimeout(() => {
+
+      $('status').textContent = "";
+
+    },3000);
+
+
+  }
+
+  catch(error){
+
+    console.warn(
+      "Google Sheet Update fehlgeschlagen:",
+      error
+    );
+
+
+    /*
+     * Wenn bereits Cache vorhanden ist,
+     * müssen wir nichts weiter tun.
+     */
+
+    if(
+      QUIZZES.length > 0
+    ){
+
+      $('status').textContent =
+        "Offline Version verwendet";
+
+    }
+
+    else{
+
+      $('quizList').innerHTML = `
+
+        <div class="card">
+
+          <h2>
+            Fehler beim Laden
+          </h2>
+
+          <p class="muted">
+
+            Die Fragen konnten nicht
+            geladen werden.
+
+          </p>
+
+          <p class="small error">
+
+            ${escapeHtml(
+              error.message
+            )}
+
+          </p>
+
+        </div>
+
+      `;
+
+    }
+
+  }
+
+}
+
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+
+function init(){
+
+  /*
+   * 1. Zuerst sofort Cache laden
+   */
+
+  const hasCache =
+    loadFromCache();
+
+
+  /*
+   * Wenn Cache vorhanden ist,
+   * Quiz sofort anzeigen.
+   */
+
+  if(hasCache){
 
     renderHome();
 
   }
 
 
-  catch(error){
+  /*
+   * 2. Google Sheet im Hintergrund
+   * aktualisieren.
+   */
 
-    console.error(
-      "Fehler:",
-      error
-    );
-
-
-    $('quizList').innerHTML = `
-
-      <div class="card">
-
-        <h2>
-          Fehler beim Laden
-        </h2>
-
-        <p class="muted">
-
-          Die Fragen konnten nicht
-          aus dem Google Sheet
-          geladen werden.
-
-        </p>
-
-        <p class="small error">
-
-          ${escapeHtml(
-            error.message
-          )}
-
-        </p>
-
-      </div>
-
-    `;
-
-  }
+  updateFromGoogle();
 
 }
+
+
+init();
 
 
 
@@ -1197,7 +1203,7 @@ function show(id){
 
 
 /* =========================================================
-   ZUR QUIZ AUSWAHL
+   HOME
    ========================================================= */
 
 
@@ -1212,7 +1218,7 @@ function showHome(){
 
 
 /* =========================================================
-   QUIZ AUSWAHL ANZEIGEN
+   QUIZ AUSWAHL
    ========================================================= */
 
 
@@ -1228,17 +1234,9 @@ function renderHome(){
 
     $('quizList').innerHTML = `
 
-      <div class="card">
+      <div class="loading">
 
-        <h2>
-          Keine Quizze gefunden
-        </h2>
-
-        <p class="muted">
-
-          Bitte prüfe dein Google Sheet.
-
-        </p>
+        Fragen werden geladen ...
 
       </div>
 
@@ -1316,34 +1314,22 @@ function startQuiz(id){
 
   const originalQuiz =
     QUIZZES.find(
-      q => q.id === id
+      q =>
+        q.id === id
     );
 
 
   if(!originalQuiz){
-
-    console.error(
-      "Quiz nicht gefunden:",
-      id
-    );
 
     return;
 
   }
 
 
-  /*
-   * Quiz kopieren
-   */
-
   currentQuiz = {
 
     ...originalQuiz,
 
-
-    /*
-     * Fragen mischen
-     */
 
     questions:
 
@@ -1354,17 +1340,11 @@ function startQuiz(id){
       .map(q => {
 
 
-        /*
-         * Antworten mischen
-         */
-
         const shuffledOptions =
-          shuffle(q.options);
+          shuffle(
+            q.options
+          );
 
-
-        /*
-         * Neue IDs vergeben
-         */
 
         const newOptions =
 
@@ -1381,11 +1361,6 @@ function startQuiz(id){
             })
           );
 
-
-        /*
-         * Richtige Antworten
-         * neu zuordnen
-         */
 
         const newCorrect =
 
@@ -1435,10 +1410,6 @@ function startQuiz(id){
   };
 
 
-  /*
-   * Zurücksetzen
-   */
-
   current = 0;
 
   points = 0;
@@ -1447,10 +1418,6 @@ function startQuiz(id){
 
   wrongQuestions = [];
 
-
-  /*
-   * Quiz anzeigen
-   */
 
   $('title').textContent =
     currentQuiz.title;
@@ -1465,7 +1432,7 @@ function startQuiz(id){
 
 
 /* =========================================================
-   AKTUELLE FRAGE
+   FRAGE ANZEIGEN
    ========================================================= */
 
 
@@ -1478,10 +1445,6 @@ function renderQuestion(){
   selected = [];
 
 
-  /*
-   * Zähler
-   */
-
   $('counter').textContent =
 
     `Frage ${
@@ -1490,10 +1453,6 @@ function renderQuestion(){
       currentQuiz.questions.length
     }`;
 
-
-  /*
-   * Fortschrittsbalken
-   */
 
   $('bar').style.width =
 
@@ -1504,17 +1463,9 @@ function renderQuestion(){
     ) + '%';
 
 
-  /*
-   * Frage
-   */
-
   $('question').textContent =
     q.question;
 
-
-  /*
-   * Hinweis
-   */
 
   $('typeHint').textContent =
 
@@ -1524,10 +1475,6 @@ function renderQuestion(){
 
       : 'Eine Antwort auswählen';
 
-
-  /*
-   * Antworten
-   */
 
   $('options').innerHTML =
 
@@ -1585,10 +1532,6 @@ function renderQuestion(){
       .join('');
 
 
-  /*
-   * Weiter Button
-   */
-
   $('nextBtn').disabled =
     true;
 
@@ -1617,10 +1560,6 @@ function choose(input){
     currentQuiz.questions[current];
 
 
-  /*
-   * MULTI
-   */
-
   if(
     q.type === 'multi'
   ){
@@ -1634,15 +1573,11 @@ function choose(input){
       ]
 
       .map(
-        x => x.value
+        x =>
+          x.value
       );
 
   }
-
-
-  /*
-   * SINGLE
-   */
 
   else{
 
@@ -1652,10 +1587,6 @@ function choose(input){
 
   }
 
-
-  /*
-   * Auswahl markieren
-   */
 
   document
 
@@ -1684,10 +1615,6 @@ function choose(input){
     );
 
 
-  /*
-   * Weiter aktivieren
-   */
-
   $('nextBtn').disabled =
     selected.length === 0;
 
@@ -1706,25 +1633,13 @@ function nextQuestion(){
     currentQuiz.questions[current];
 
 
-  /*
-   * Richtige Antworten sortieren
-   */
-
   const correct =
     [...q.correct].sort();
 
 
-  /*
-   * Ausgewählte Antworten sortieren
-   */
-
   const chosen =
     [...selected].sort();
 
-
-  /*
-   * Prüfen
-   */
 
   const ok =
 
@@ -1737,21 +1652,12 @@ function nextQuestion(){
     );
 
 
-  /*
-   * Punkte
-   */
-
   if(ok){
 
     points +=
       q.points || 1;
 
   }
-
-
-  /*
-   * Falsche Frage speichern
-   */
 
   else{
 
@@ -1767,23 +1673,15 @@ function nextQuestion(){
         q.correct,
 
       selected:
-        selected
+        [...selected]
 
     });
 
   }
 
 
-  /*
-   * Nächste Frage
-   */
-
   current++;
 
-
-  /*
-   * Ende
-   */
 
   if(
     current >=
@@ -1814,10 +1712,6 @@ function showResult(){
   show('result');
 
 
-  /*
-   * Maximale Punktzahl
-   */
-
   const max =
 
     currentQuiz.questions.reduce(
@@ -1830,10 +1724,6 @@ function showResult(){
     );
 
 
-  /*
-   * Prozent
-   */
-
   const pct =
 
     max
@@ -1844,10 +1734,6 @@ function showResult(){
 
       : 0;
 
-
-  /*
-   * Ergebnis anzeigen
-   */
 
   $('resultTitle').textContent =
 
@@ -1866,10 +1752,9 @@ function showResult(){
 
 
 
-  /* =======================================================
-     FALSCHE FRAGEN
-     ======================================================= */
-
+  /*
+   * Alles richtig
+   */
 
   if(
     wrongQuestions.length === 0
@@ -1899,6 +1784,10 @@ function showResult(){
   }
 
 
+
+  /*
+   * Falsche Fragen
+   */
 
   $('wrongQuestions').innerHTML = `
 
@@ -1931,13 +1820,11 @@ function showResult(){
                 <b>
 
                   ${index + 1}.
-
                   ${escapeHtml(
                     item.question
                   )}
 
                 </b>
-
 
 
                 <p class="small">
@@ -1984,7 +1871,6 @@ function showResult(){
                   </strong>
 
                 </p>
-
 
 
                 <p class="small">
@@ -2048,7 +1934,7 @@ function showResult(){
 
 
 /* =========================================================
-   QUIZ NEU STARTEN
+   NEU STARTEN
    ========================================================= */
 
 
@@ -2092,21 +1978,11 @@ function escapeHtml(s){
 }
 
 
-
 function escapeAttr(s){
 
   return escapeHtml(s);
 
 }
-
-
-
-/* =========================================================
-   START
-   ========================================================= */
-
-
-loadQuestions();
 
 
 </script>
