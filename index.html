@@ -1,170 +1,347 @@
+```html
 <!doctype html>
 <html lang="de">
+
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#111827">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
+
+<meta
+  name="theme-color"
+  content="#111827"
+>
+
 <title>Quiz Training</title>
 
+
 <style>
-*{box-sizing:border-box}
+
+*{
+  box-sizing:border-box
+}
+
 
 body{
+
   margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
+
   background:#f3f4f6;
+
   color:#111827
+
 }
+
 
 .app{
+
   max-width:720px;
+
   margin:auto;
+
   min-height:100vh;
+
   padding:20px
+
 }
+
 
 .top{
+
   display:flex;
+
   justify-content:space-between;
+
   align-items:center;
+
   margin-bottom:20px
+
 }
+
 
 h1{
+
   font-size:30px;
+
   margin:8px 0
+
 }
+
 
 h2{
+
   font-size:22px;
+
   margin:8px 0
+
 }
+
 
 .muted{
+
   color:#6b7280
+
 }
+
 
 .card{
+
   background:white;
+
   border-radius:18px;
+
   padding:20px;
+
   margin:14px 0;
+
   box-shadow:0 5px 20px #0000000d
+
 }
+
 
 .btn{
+
   width:100%;
+
   border:0;
+
   border-radius:12px;
+
   padding:14px 16px;
+
   font-size:16px;
+
   font-weight:700;
+
   cursor:pointer;
+
   background:#111827;
+
   color:white;
+
   margin-top:12px
+
 }
+
 
 .btn.secondary{
+
   background:#e5e7eb;
+
   color:#111827
+
 }
+
 
 .btn:disabled{
+
   opacity:.45;
+
   cursor:not-allowed
+
 }
+
 
 .option{
+
   display:flex;
+
   align-items:flex-start;
+
   gap:12px;
+
   padding:14px;
+
   border:2px solid #e5e7eb;
+
   border-radius:12px;
+
   margin:10px 0;
+
   cursor:pointer
+
 }
+
 
 .option.selected{
+
   border-color:#111827;
+
   background:#f9fafb
+
 }
+
 
 .option input{
+
   margin-top:3px;
+
   transform:scale(1.2)
+
 }
+
 
 .progress{
+
   height:8px;
+
   background:#e5e7eb;
+
   border-radius:99px;
+
   overflow:hidden;
+
   margin:15px 0
+
 }
+
 
 .bar{
+
   height:100%;
+
   background:#111827;
+
   width:0
+
 }
+
 
 .badge{
+
   display:inline-block;
+
   background:#e5e7eb;
+
   border-radius:99px;
+
   padding:5px 9px;
+
   font-size:12px;
+
   font-weight:700
+
 }
+
 
 .score{
+
   font-size:48px;
+
   font-weight:800;
+
   text-align:center;
+
   margin:20px 0
+
 }
+
 
 .hidden{
+
   display:none
+
 }
+
 
 .row{
+
   display:flex;
+
   gap:10px
+
 }
+
 
 .row .btn{
+
   flex:1
+
 }
+
 
 .small{
+
   font-size:13px
+
 }
+
 
 .correct{
+
   border-color:#16a34a!important;
+
   background:#f0fdf4
+
 }
 
+
 .wrong{
+
   border-color:#dc2626!important;
+
   background:#fef2f2
+
 }
+
+
+.error{
+
+  color:#dc2626;
+
+  font-weight:600
+
+}
+
+
+.loading{
+
+  text-align:center;
+
+  padding:30px 10px;
+
+  color:#6b7280
+
+}
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="app">
 
+
   <div class="top">
+
     <div>
-      <span class="badge">Quiz Training</span>
-      <h1 id="title">Meine Quizze</h1>
+
+      <span class="badge">
+        Quiz Training
+      </span>
+
+      <h1 id="title">
+        Meine Quizze
+      </h1>
+
     </div>
+
   </div>
+
 
 
   <!-- QUIZ AUSWAHL -->
@@ -172,36 +349,78 @@ h2{
   <section id="home">
 
     <p class="muted">
-      Die Quizzes dürfen ausschliesslich für interne Zwecke im Rahmen der Ausbildung verwendet werden. Nach erfolgreichem Abschluss der Lehre werden sämtliche Quizzes und die damit verbundenen Daten gelöscht.
-      <b>Bujamin.Zuberi</b> 
+
+      Die Quizzes dürfen ausschliesslich
+      für interne Zwecke im Rahmen der
+      Ausbildung verwendet werden.
+      Nach erfolgreichem Abschluss der
+      Lehre werden sämtliche Quizzes und
+      die damit verbundenen Daten gelöscht.
+
+      <b>Bujamin.Zuberi</b>
+
     </p>
 
-    <div id="quizList"></div>
+
+    <div id="quizList">
+
+      <div class="loading">
+
+        Fragen werden geladen ...
+
+      </div>
+
+    </div>
 
   </section>
+
 
 
   <!-- QUIZ -->
 
   <section id="quiz" class="hidden">
 
-    <button class="btn secondary" onclick="showHome()">
-      ← Quiz-Auswahl
+
+    <button
+      class="btn secondary"
+      onclick="showHome()"
+    >
+
+      ← Quiz Auswahl
+
     </button>
+
 
     <div class="card">
 
-      <div class="muted" id="counter"></div>
+
+      <div
+        class="muted"
+        id="counter"
+      ></div>
+
 
       <div class="progress">
-        <div class="bar" id="bar"></div>
+
+        <div
+          class="bar"
+          id="bar"
+        ></div>
+
       </div>
+
 
       <h2 id="question"></h2>
 
-      <div class="muted small" id="typeHint"></div>
+
+      <div
+        class="muted small"
+        id="typeHint"
+      ></div>
+
 
       <div id="options"></div>
+
 
       <button
         class="btn"
@@ -209,23 +428,34 @@ h2{
         onclick="nextQuestion()"
         disabled
       >
+
         Weiter
+
       </button>
+
 
     </div>
 
   </section>
 
 
+
   <!-- ERGEBNIS -->
 
   <section id="result" class="hidden">
 
+
     <div class="card">
+
 
       <h2 id="resultTitle"></h2>
 
-      <div class="score" id="score"></div>
+
+      <div
+        class="score"
+        id="score"
+      ></div>
+
 
       <p
         id="resultText"
@@ -233,76 +463,732 @@ h2{
         style="text-align:center"
       ></p>
 
+
+      <!-- FALSCHE FRAGEN -->
+
       <div id="wrongQuestions"></div>
-      
-      <button class="btn" onclick="restart()">
+
+
+      <button
+        class="btn"
+        onclick="restart()"
+      >
+
         Noch einmal
+
       </button>
 
-      <button class="btn secondary" onclick="showHome()">
-        Zur Quiz-Auswahl
+
+      <button
+        class="btn secondary"
+        onclick="showHome()"
+      >
+
+        Zur Quiz Auswahl
+
       </button>
+
 
     </div>
 
   </section>
 
+
 </div>
 
- <script src="quizzes.js"></script> 
- 
 
-<script> 
+
+<script>
+
+
+/* =========================================================
+   GOOGLE SHEET
+   ========================================================= */
+
+
+const SHEET_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVy9kNb6JPXKhhKto_6tauXelFzXS4xOP61q-kaoqzvwVAE628_hXk26SZ-QP4sVQ5j1RiqO0cxxVn/pub?gid=0&single=true&output=csv";
+
 
 
 /* =========================================================
-   QUIZ-VARIABLEN
+   QUIZ VARIABLEN
    ========================================================= */
 
-let currentQuiz=null;
-let current=0;
-let points=0;
-let selected=[];
-let wrongQuestions=[];
 
-/* =========================================================
-   HILFSFUNKTION: ARRAY ZUFÄLLIG MISCHEN
-   ========================================================= */
+let QUIZZES = [];
 
-function shuffle(array){
+let currentQuiz = null;
 
-  const arr=[...array];
+let current = 0;
 
-  for(let i=arr.length-1;i>0;i--){
+let points = 0;
 
-    const j=Math.floor(Math.random()*(i+1));
+let selected = [];
 
-    [arr[i],arr[j]]=[arr[j],arr[i]];
+let wrongQuestions = [];
 
-  }
-
-  return arr;
-}
 
 
 /* =========================================================
    HTML ELEMENT KURZ AUFRUFEN
    ========================================================= */
 
-const $=id=>document.getElementById(id);
+
+const $ = id =>
+  document.getElementById(id);
+
+
+
+/* =========================================================
+   ARRAY ZUFÄLLIG MISCHEN
+   ========================================================= */
+
+
+function shuffle(array){
+
+  const arr = [...array];
+
+
+  for(
+    let i = arr.length - 1;
+    i > 0;
+    i--
+  ){
+
+    const j =
+      Math.floor(
+        Math.random() * (i + 1)
+      );
+
+
+    [arr[i],arr[j]] =
+      [arr[j],arr[i]];
+
+  }
+
+
+  return arr;
+
+}
+
+
+
+/* =========================================================
+   CSV PARSER
+   ========================================================= */
+
+
+function parseCSV(text){
+
+  const rows = [];
+
+  let row = [];
+
+  let cell = "";
+
+  let insideQuotes = false;
+
+
+  for(
+    let i = 0;
+    i < text.length;
+    i++
+  ){
+
+    const char = text[i];
+
+    const next = text[i + 1];
+
+
+    /*
+     * Doppelte Anführungszeichen
+     */
+
+    if(
+      char === '"' &&
+      insideQuotes &&
+      next === '"'
+    ){
+
+      cell += '"';
+
+      i++;
+
+    }
+
+
+    /*
+     * Anführungszeichen öffnen
+     * oder schliessen
+     */
+
+    else if(char === '"'){
+
+      insideQuotes =
+        !insideQuotes;
+
+    }
+
+
+    /*
+     * Komma ausserhalb
+     * von Anführungszeichen
+     */
+
+    else if(
+      char === ',' &&
+      !insideQuotes
+    ){
+
+      row.push(cell.trim());
+
+      cell = "";
+
+    }
+
+
+    /*
+     * Neue Zeile
+     */
+
+    else if(
+      (char === '\n' ||
+       char === '\r') &&
+      !insideQuotes
+    ){
+
+      if(
+        char === '\r' &&
+        next === '\n'
+      ){
+
+        i++;
+
+      }
+
+
+      row.push(cell.trim());
+
+      cell = "";
+
+
+      if(
+        row.some(
+          x => x !== ""
+        )
+      ){
+
+        rows.push(row);
+
+      }
+
+
+      row = [];
+
+    }
+
+
+    else{
+
+      cell += char;
+
+    }
+
+  }
+
+
+  /*
+   * Letzte Zeile
+   */
+
+  if(
+    cell !== "" ||
+    row.length > 0
+  ){
+
+    row.push(cell.trim());
+
+
+    if(
+      row.some(
+        x => x !== ""
+      )
+    ){
+
+      rows.push(row);
+
+    }
+
+  }
+
+
+  return rows;
+
+}
+
+
+
+/* =========================================================
+   GOOGLE SHEET LADEN
+   ========================================================= */
+
+
+async function loadQuestions(){
+
+  try{
+
+
+    const response =
+      await fetch(
+        SHEET_URL
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        "Google Sheet konnte nicht geladen werden."
+      );
+
+    }
+
+
+    const csv =
+      await response.text();
+
+
+    const rows =
+      parseCSV(csv);
+
+
+    if(rows.length < 2){
+
+      throw new Error(
+        "Das Google Sheet enthält keine Fragen."
+      );
+
+    }
+
+
+    /*
+     * Spaltennamen
+     */
+
+    const headers =
+      rows[0].map(
+        x =>
+          x
+            .trim()
+            .toLowerCase()
+      );
+
+
+    /*
+     * Spaltenpositionen
+     */
+
+    const quizIndex =
+      headers.indexOf("quiz");
+
+    const questionIndex =
+      headers.indexOf("question");
+
+    const typeIndex =
+      headers.indexOf("type");
+
+    const aIndex =
+      headers.indexOf("a");
+
+    const bIndex =
+      headers.indexOf("b");
+
+    const cIndex =
+      headers.indexOf("c");
+
+    const dIndex =
+      headers.indexOf("d");
+
+    const correctIndex =
+      headers.indexOf("correct");
+
+    const pointsIndex =
+      headers.indexOf("points");
+
+
+    /*
+     * Pflichtfelder prüfen
+     */
+
+    if(
+      quizIndex === -1 ||
+      questionIndex === -1 ||
+      typeIndex === -1 ||
+      correctIndex === -1
+    ){
+
+      throw new Error(
+
+        "Die Spalten müssen mindestens " +
+        "quiz, question, type und correct enthalten."
+
+      );
+
+    }
+
+
+    /*
+     * Fragen erstellen
+     */
+
+    const questions =
+
+      rows
+
+        .slice(1)
+
+        .map(row => {
+
+
+          const options = [];
+
+
+          /*
+           * Antwort A
+           */
+
+          if(
+            aIndex !== -1 &&
+            row[aIndex] &&
+            row[aIndex].trim() !== ""
+          ){
+
+            options.push({
+
+              id:"A",
+
+              text:
+                row[aIndex].trim()
+
+            });
+
+          }
+
+
+          /*
+           * Antwort B
+           */
+
+          if(
+            bIndex !== -1 &&
+            row[bIndex] &&
+            row[bIndex].trim() !== ""
+          ){
+
+            options.push({
+
+              id:"B",
+
+              text:
+                row[bIndex].trim()
+
+            });
+
+          }
+
+
+          /*
+           * Antwort C
+           */
+
+          if(
+            cIndex !== -1 &&
+            row[cIndex] &&
+            row[cIndex].trim() !== ""
+          ){
+
+            options.push({
+
+              id:"C",
+
+              text:
+                row[cIndex].trim()
+
+            });
+
+          }
+
+
+          /*
+           * Antwort D
+           */
+
+          if(
+            dIndex !== -1 &&
+            row[dIndex] &&
+            row[dIndex].trim() !== ""
+          ){
+
+            options.push({
+
+              id:"D",
+
+              text:
+                row[dIndex].trim()
+
+            });
+
+          }
+
+
+          /*
+           * Richtige Antworten
+           */
+
+          const correct =
+
+            row[correctIndex]
+
+              ? row[correctIndex]
+
+                  .split(",")
+
+                  .map(
+                    x =>
+                      x
+                        .trim()
+                        .toUpperCase()
+                  )
+
+                  .filter(Boolean)
+
+              : [];
+
+
+          /*
+           * Frage
+           */
+
+          return {
+
+            quiz:
+              row[quizIndex]
+                ? row[quizIndex].trim()
+                : "",
+
+
+            question:
+              row[questionIndex]
+                ? row[questionIndex].trim()
+                : "",
+
+
+            type:
+              row[typeIndex]
+                ? row[typeIndex]
+                    .trim()
+                    .toLowerCase()
+                : "single",
+
+
+            options: options,
+
+
+            options,
+
+
+            correct,
+
+
+            points:
+
+              row[pointsIndex] &&
+              !isNaN(
+                Number(
+                  row[pointsIndex]
+                )
+              )
+
+                ? Number(
+                    row[pointsIndex]
+                  )
+
+                : 1
+
+          };
+
+        })
+
+
+        /*
+         * Leere Zeilen ignorieren
+         */
+
+        .filter(q =>
+
+          q.quiz &&
+          q.question &&
+          q.options.length > 0 &&
+          q.correct.length > 0
+
+        );
+
+
+    /*
+     * Quiz Kategorien erstellen
+     */
+
+    const quizMap = {};
+
+
+    questions.forEach(q => {
+
+      if(
+        !quizMap[q.quiz]
+      ){
+
+        quizMap[q.quiz] = [];
+
+      }
+
+
+      quizMap[q.quiz].push({
+
+        question:q.question,
+
+        type:q.type,
+
+        options:q.options,
+
+        correct:q.correct,
+
+        points:q.points
+
+      });
+
+    });
+
+
+    /*
+     * QUIZZES erstellen
+     */
+
+    QUIZZES =
+
+      Object.keys(
+        quizMap
+      )
+
+      .map(
+        quizName => ({
+
+          id:
+            quizName
+              .toLowerCase()
+              .replace(
+                /[^a-z0-9äöü]+/gi,
+                "-"
+              ),
+
+
+          title:
+            quizName,
+
+
+          description:
+            quizName +
+            " – Grundlagen",
+
+
+          active:true,
+
+
+          questions:
+            quizMap[quizName]
+
+        })
+      );
+
+
+    /*
+     * Kontrolle in Console
+     */
+
+    console.log(
+      "Google Sheet geladen:",
+      QUIZZES
+    );
+
+
+    /*
+     * Startseite anzeigen
+     */
+
+    renderHome();
+
+  }
+
+
+  catch(error){
+
+    console.error(
+      "Fehler:",
+      error
+    );
+
+
+    $('quizList').innerHTML = `
+
+      <div class="card">
+
+        <h2>
+          Fehler beim Laden
+        </h2>
+
+        <p class="muted">
+
+          Die Fragen konnten nicht
+          aus dem Google Sheet
+          geladen werden.
+
+        </p>
+
+        <p class="small error">
+
+          ${escapeHtml(
+            error.message
+          )}
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
 
 
 /* =========================================================
    SEITEN WECHSELN
    ========================================================= */
 
+
 function show(id){
 
-  ['home','quiz','result'].forEach(x=>{
+  [
+    'home',
+    'quiz',
+    'result'
+  ]
+
+  .forEach(x => {
 
     $(x).classList.toggle(
       'hidden',
-      x!==id
+      x !== id
     );
 
   });
@@ -310,9 +1196,11 @@ function show(id){
 }
 
 
+
 /* =========================================================
-   ZUR QUIZ-AUSWAHL
+   ZUR QUIZ AUSWAHL
    ========================================================= */
+
 
 function showHome(){
 
@@ -323,157 +1211,251 @@ function showHome(){
 }
 
 
+
 /* =========================================================
-   QUIZ-AUSWAHL ANZEIGEN
+   QUIZ AUSWAHL ANZEIGEN
    ========================================================= */
+
 
 function renderHome(){
 
-  $('title').textContent='Meine Quizze';
+  $('title').textContent =
+    'Meine Quizze';
 
-  $('quizList').innerHTML=
+
+  if(
+    QUIZZES.length === 0
+  ){
+
+    $('quizList').innerHTML = `
+
+      <div class="card">
+
+        <h2>
+          Keine Quizze gefunden
+        </h2>
+
+        <p class="muted">
+
+          Bitte prüfe dein Google Sheet.
+
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  $('quizList').innerHTML =
+
     QUIZZES
-      .filter(q=>q.active!==false)
-      .map(q=>`
+
+      .filter(
+        q =>
+          q.active !== false
+      )
+
+      .map(q => `
 
         <div class="card">
 
           <h2>
-            ${escapeHtml(q.title)}
+
+            ${escapeHtml(
+              q.title
+            )}
+
           </h2>
 
+
           <p class="muted">
-            ${escapeHtml(q.description||'')}
+
+            ${escapeHtml(
+              q.description || ''
+            )}
+
           </p>
 
+
           <span class="badge">
-            ${q.questions.length} Fragen
+
+            ${q.questions.length}
+            Fragen
+
           </span>
+
 
           <button
             class="btn"
-            onclick="startQuiz('${q.id}')"
+            onclick="startQuiz('${escapeAttr(q.id)}')"
           >
+
             Starten
+
           </button>
 
         </div>
 
       `)
+
       .join('');
 
 }
+
 
 
 /* =========================================================
    QUIZ STARTEN
    ========================================================= */
 
+
 function startQuiz(id){
 
+  const originalQuiz =
+    QUIZZES.find(
+      q => q.id === id
+    );
+
+
+  if(!originalQuiz){
+
+    console.error(
+      "Quiz nicht gefunden:",
+      id
+    );
+
+    return;
+
+  }
+
+
   /*
-   * Originales Quiz aus QUIZZES holen
+   * Quiz kopieren
    */
 
-  const originalQuiz=QUIZZES.find(
-    q=>q.id===id
-  );
-
-
-  /*
-   * Neue Kopie des Quiz erstellen.
-   *
-   * Wichtig:
-   * Das Original in quizzes.js wird NICHT verändert.
-   */
-
-  currentQuiz={
+  currentQuiz = {
 
     ...originalQuiz,
 
+
     /*
-     * Fragen zufällig mischen
+     * Fragen mischen
      */
 
-    questions:shuffle(originalQuiz.questions).map(q=>{
+    questions:
 
-      /*
-       * Antwortmöglichkeiten zufällig mischen
-       */
+      shuffle(
+        originalQuiz.questions
+      )
 
-      const shuffledOptions=shuffle(q.options);
-
-
-      /*
-       * Neue IDs A, B, C, D vergeben
-       */
-
-      const newOptions=
-        shuffledOptions.map((option,index)=>({
-
-          ...option,
-
-          id:String.fromCharCode(65+index)
-
-        }));
+      .map(q => {
 
 
-      /*
-       * Herausfinden, welche neue ID
-       * zur ursprünglichen richtigen Antwort gehört.
-       */
+        /*
+         * Antworten mischen
+         */
 
-      const newCorrect=
-        shuffledOptions
-
-          .map((option,index)=>({
-
-            oldId:option.id,
-
-            newId:String.fromCharCode(65+index)
-
-          }))
-
-          .filter(x=>
-            q.correct.includes(x.oldId)
-          )
-
-          .map(x=>x.newId);
+        const shuffledOptions =
+          shuffle(q.options);
 
 
-      /*
-       * Neue Frage zurückgeben
-       */
+        /*
+         * Neue IDs vergeben
+         */
 
-      return{
+        const newOptions =
 
-        ...q,
+          shuffledOptions.map(
+            (option,index) => ({
 
-        options:newOptions,
+              ...option,
 
-        correct:newCorrect
+              id:
+                String.fromCharCode(
+                  65 + index
+                )
 
-      };
+            })
+          );
 
-    })
+
+        /*
+         * Richtige Antworten
+         * neu zuordnen
+         */
+
+        const newCorrect =
+
+          shuffledOptions
+
+            .map(
+              (option,index) => ({
+
+                oldId:
+                  option.id,
+
+                newId:
+                  String.fromCharCode(
+                    65 + index
+                  )
+
+              })
+            )
+
+            .filter(
+              x =>
+                q.correct.includes(
+                  x.oldId
+                )
+            )
+
+            .map(
+              x =>
+                x.newId
+            );
+
+
+        return {
+
+          ...q,
+
+          options:
+            newOptions,
+
+          correct:
+            newCorrect
+
+        };
+
+      })
 
   };
 
 
   /*
-   * Quiz zurücksetzen
+   * Zurücksetzen
    */
 
-  current=0;
-  points=0;
-  selected=[];
-  wrongQuestions=[];
+  current = 0;
+
+  points = 0;
+
+  selected = [];
+
+  wrongQuestions = [];
+
 
   /*
    * Quiz anzeigen
    */
 
-  $('title').textContent=currentQuiz.title;
+  $('title').textContent =
+    currentQuiz.title;
+
 
   show('quiz');
 
@@ -482,119 +1464,179 @@ function startQuiz(id){
 }
 
 
+
 /* =========================================================
-   AKTUELLE FRAGE ANZEIGEN
+   AKTUELLE FRAGE
    ========================================================= */
+
 
 function renderQuestion(){
 
-  const q=currentQuiz.questions[current];
+  const q =
+    currentQuiz.questions[current];
 
-  selected=[];
+
+  selected = [];
 
 
   /*
-   * Fortschritt / Zähler
+   * Zähler
    */
 
-  $('counter').textContent=
-    `Frage ${current+1} von ${currentQuiz.questions.length}`;
+  $('counter').textContent =
+
+    `Frage ${
+      current + 1
+    } von ${
+      currentQuiz.questions.length
+    }`;
 
 
   /*
    * Fortschrittsbalken
    */
 
-  $('bar').style.width=
-    ((current)/currentQuiz.questions.length*100)+'%';
+  $('bar').style.width =
+
+    (
+      current /
+      currentQuiz.questions.length *
+      100
+    ) + '%';
 
 
   /*
-   * Frage anzeigen
+   * Frage
    */
 
-  $('question').textContent=q.question;
+  $('question').textContent =
+    q.question;
 
 
   /*
-   * Hinweis Single / Multi
+   * Hinweis
    */
 
-  $('typeHint').textContent=
-    q.type==='multi'
-      ?'Mehrere Antworten möglich'
-      :'Eine Antwort auswählen';
+  $('typeHint').textContent =
+
+    q.type === 'multi'
+
+      ? 'Mehrere Antworten möglich'
+
+      : 'Eine Antwort auswählen';
 
 
   /*
-   * Antworten anzeigen
+   * Antworten
    */
 
-  $('options').innerHTML=
+  $('options').innerHTML =
 
-    q.options.map((o,i)=>`
+    q.options
 
-      <label
-        class="option"
-        id="opt${i}"
-      >
+      .map(
+        (o,i) => `
 
-        <input
-          type="${q.type==='multi'?'checkbox':'radio'}"
-          name="answer"
-          value="${escapeAttr(o.id)}"
-          onchange="choose(this)"
-        >
+          <label
+            class="option"
+            id="opt${i}"
+          >
 
-        <span>
-          <b>${escapeHtml(o.id)}.</b>
-          ${escapeHtml(o.text)}
-        </span>
+            <input
 
-      </label>
+              type="${
+                q.type === 'multi'
+                  ? 'checkbox'
+                  : 'radio'
+              }"
 
-    `).join('');
+              name="answer"
+
+              value="${escapeAttr(
+                o.id
+              )}"
+
+              onchange="choose(this)"
+
+            >
+
+
+            <span>
+
+              <b>
+
+                ${escapeHtml(
+                  o.id
+                )}.
+
+              </b>
+
+
+              ${escapeHtml(
+                o.text
+              )}
+
+            </span>
+
+          </label>
+
+        `
+      )
+
+      .join('');
 
 
   /*
-   * Weiter-Button deaktivieren
+   * Weiter Button
    */
 
-  $('nextBtn').disabled=true;
+  $('nextBtn').disabled =
+    true;
 
 
-  /*
-   * Text des Weiter-Buttons
-   */
+  $('nextBtn').textContent =
 
-  $('nextBtn').textContent=
-    current===currentQuiz.questions.length-1
-      ?'Ergebnis anzeigen'
-      :'Weiter';
+    current ===
+    currentQuiz.questions.length - 1
+
+      ? 'Ergebnis anzeigen'
+
+      : 'Weiter';
 
 }
+
 
 
 /* =========================================================
    ANTWORT AUSWÄHLEN
    ========================================================= */
 
+
 function choose(input){
 
-  const q=currentQuiz.questions[current];
+  const q =
+    currentQuiz.questions[current];
 
 
   /*
    * MULTI
    */
 
-  if(q.type==='multi'){
+  if(
+    q.type === 'multi'
+  ){
 
-    selected=
-      [...document.querySelectorAll(
-        'input[name=answer]:checked'
-      )]
-      .map(x=>x.value);
+    selected =
+
+      [
+        ...document.querySelectorAll(
+          'input[name=answer]:checked'
+        )
+      ]
+
+      .map(
+        x => x.value
+      );
 
   }
 
@@ -605,53 +1647,71 @@ function choose(input){
 
   else{
 
-    selected=[input.value];
+    selected = [
+      input.value
+    ];
 
   }
 
 
   /*
-   * Ausgewählte Antworten hervorheben
+   * Auswahl markieren
    */
 
   document
-    .querySelectorAll('.option')
-    .forEach((el,i)=>{
 
-      const id=q.options[i].id;
+    .querySelectorAll(
+      '.option'
+    )
 
-      el.classList.toggle(
-        'selected',
-        selected.includes(id)
-      );
+    .forEach(
+      (el,i) => {
 
-    });
+        const id =
+          q.options[i].id;
+
+
+        el.classList.toggle(
+
+          'selected',
+
+          selected.includes(
+            id
+          )
+
+        );
+
+      }
+    );
 
 
   /*
    * Weiter aktivieren
    */
 
-  $('nextBtn').disabled=
-    selected.length===0;
+  $('nextBtn').disabled =
+    selected.length === 0;
 
 }
+
 
 
 /* =========================================================
    NÄCHSTE FRAGE
    ========================================================= */
 
+
 function nextQuestion(){
 
-  const q=currentQuiz.questions[current];
+  const q =
+    currentQuiz.questions[current];
 
 
   /*
    * Richtige Antworten sortieren
    */
 
-  const correct=
+  const correct =
     [...q.correct].sort();
 
 
@@ -659,63 +1719,77 @@ function nextQuestion(){
    * Ausgewählte Antworten sortieren
    */
 
-  const chosen=
+  const chosen =
     [...selected].sort();
 
 
   /*
-   * Prüfen, ob die Antworten exakt übereinstimmen
+   * Prüfen
    */
 
-  const ok=
-    correct.length===chosen.length &&
+  const ok =
+
+    correct.length ===
+    chosen.length &&
+
     correct.every(
-      (x,i)=>x===chosen[i]
+      (x,i) =>
+        x === chosen[i]
     );
 
 
   /*
-   * Punkte vergeben
+   * Punkte
    */
 
   if(ok){
 
-    points+=q.points||1;
+    points +=
+      q.points || 1;
 
   }
 
-/*
- * Falsch beantwortete Frage speichern
- */
 
-else{
-
-  wrongQuestions.push({
-
-    question:q.question,
-
-    options:q.options,
-
-    correct:q.correct,
-
-    selected:selected
-
-  });
-
-}
   /*
-   * Zur nächsten Frage
+   * Falsche Frage speichern
+   */
+
+  else{
+
+    wrongQuestions.push({
+
+      question:
+        q.question,
+
+      options:
+        q.options,
+
+      correct:
+        q.correct,
+
+      selected:
+        selected
+
+    });
+
+  }
+
+
+  /*
+   * Nächste Frage
    */
 
   current++;
 
 
   /*
-   * Wenn alle Fragen beantwortet wurden:
-   * Ergebnis anzeigen
+   * Ende
    */
 
-  if(current>=currentQuiz.questions.length){
+  if(
+    current >=
+    currentQuiz.questions.length
+  ){
 
     showResult();
 
@@ -730,9 +1804,11 @@ else{
 }
 
 
+
 /* =========================================================
-   ERGEBNIS ANZEIGEN
+   ERGEBNIS
    ========================================================= */
+
 
 function showResult(){
 
@@ -740,157 +1816,282 @@ function showResult(){
 
 
   /*
-   * Maximale Punktzahl berechnen
+   * Maximale Punktzahl
    */
 
-  const max=
+  const max =
+
     currentQuiz.questions.reduce(
-      (s,q)=>s+(q.points||1),
+
+      (sum,q) =>
+        sum + (q.points || 1),
+
       0
+
     );
 
 
   /*
-   * Prozentzahl berechnen
+   * Prozent
    */
 
-  const pct=
+  const pct =
+
     max
-      ?Math.round(points/max*100)
-      :0;
+
+      ? Math.round(
+          points / max * 100
+        )
+
+      : 0;
 
 
   /*
    * Ergebnis anzeigen
    */
 
-  $('resultTitle').textContent=
-    currentQuiz.title+' abgeschlossen';
+  $('resultTitle').textContent =
+
+    currentQuiz.title +
+    ' abgeschlossen';
 
 
-  $('score').textContent=
+  $('score').textContent =
+
     `${points} / ${max}`;
 
 
-  $('resultText').textContent=
+  $('resultText').textContent =
+
     `${pct}% richtig.`;
 
-  /*
- * Falsche Fragen anzeigen
- */
 
-if(wrongQuestions.length===0){
 
-  $('wrongQuestions').innerHTML=`
+  /* =======================================================
+     FALSCHE FRAGEN
+     ======================================================= */
+
+
+  if(
+    wrongQuestions.length === 0
+  ){
+
+    $('wrongQuestions').innerHTML = `
+
+      <div class="card">
+
+        <h2>
+          🎉 Alles richtig!
+        </h2>
+
+        <p class="muted">
+
+          Du hast alle Fragen
+          richtig beantwortet.
+
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+
+  $('wrongQuestions').innerHTML = `
+
     <div class="card">
-      <h2>🎉 Alles richtig!</h2>
-      <p class="muted">
-        Du hast alle Fragen richtig beantwortet.
-      </p>
+
+      <h2>
+        Falsch beantwortete Fragen
+      </h2>
+
+
+      ${
+        wrongQuestions
+
+          .map(
+            (item,index) => `
+
+              <div
+
+                style="
+                  border:2px solid #fee2e2;
+                  background:#fef2f2;
+                  border-radius:12px;
+                  padding:14px;
+                  margin:12px 0;
+                "
+
+              >
+
+
+                <b>
+
+                  ${index + 1}.
+
+                  ${escapeHtml(
+                    item.question
+                  )}
+
+                </b>
+
+
+
+                <p class="small">
+
+                  Deine Antwort:
+
+                  <strong>
+
+                    ${
+                      item.selected.length
+
+                        ? item.selected
+
+                            .map(
+                              id => {
+
+                                const option =
+                                  item.options.find(
+                                    o =>
+                                      o.id === id
+                                  );
+
+
+                                return option
+
+                                  ? escapeHtml(
+                                      id +
+                                      '. ' +
+                                      option.text
+                                    )
+
+                                  : escapeHtml(
+                                      id
+                                    );
+
+                              }
+                            )
+
+                            .join(', ')
+
+                        : 'Keine Antwort'
+                    }
+
+                  </strong>
+
+                </p>
+
+
+
+                <p class="small">
+
+                  Richtige Antwort:
+
+                  <strong>
+
+                    ${
+                      item.correct
+
+                        .map(
+                          id => {
+
+                            const option =
+                              item.options.find(
+                                o =>
+                                  o.id === id
+                              );
+
+
+                            return option
+
+                              ? escapeHtml(
+                                  id +
+                                  '. ' +
+                                  option.text
+                                )
+
+                              : escapeHtml(
+                                  id
+                                );
+
+                          }
+                        )
+
+                        .join(', ')
+
+                    }
+
+                  </strong>
+
+                </p>
+
+
+              </div>
+
+            `
+          )
+
+          .join('')
+      }
+
+
     </div>
+
   `;
 
 }
 
-else{
-
-  $('wrongQuestions').innerHTML=`
-
-    <div class="card">
-
-      <h2>Falsch beantwortete Fragen</h2>
-
-      ${wrongQuestions.map((item,index)=>`
-
-        <div style="
-          border:2px solid #fee2e2;
-          background:#fef2f2;
-          border-radius:12px;
-          padding:14px;
-          margin:12px 0;
-        ">
-
-          <b>
-            ${index+1}. ${escapeHtml(item.question)}
-          </b>
-
-          <p class="small">
-            Deine Antwort:
-            <strong>
-              ${
-                item.selected.length
-                  ? item.selected.map(id=>{
-                      const option=item.options.find(o=>o.id===id);
-                      return option
-                        ? escapeHtml(id+'. '+option.text)
-                        : escapeHtml(id);
-                    }).join(', ')
-                  : 'Keine Antwort'
-              }
-            </strong>
-          </p>
-
-          <p class="small">
-            Richtige Antwort:
-            <strong>
-              ${
-                item.correct.map(id=>{
-                  const option=item.options.find(o=>o.id===id);
-                  return option
-                    ? escapeHtml(id+'. '+option.text)
-                    : escapeHtml(id);
-                }).join(', ')
-              }
-            </strong>
-          </p>
-
-        </div>
-
-      `).join('')}
-
-    </div>
-
-  `;
-
-}
-
-}
 
 
 /* =========================================================
    QUIZ NEU STARTEN
    ========================================================= */
 
+
 function restart(){
 
-  /*
-   * startQuiz() erstellt jedes Mal
-   * eine komplett neue zufällige Reihenfolge.
-   */
-
-  startQuiz(currentQuiz.id);
+  startQuiz(
+    currentQuiz.id
+  );
 
 }
 
 
+
 /* =========================================================
-   SICHERHEIT: HTML ESCAPEN
+   HTML SICHER ESCAPEN
    ========================================================= */
+
 
 function escapeHtml(s){
 
   return String(s).replace(
+
     /[&<>"']/g,
-    m=>({
+
+    m => ({
+
       '&':'&amp;',
+
       '<':'&lt;',
+
       '>':'&gt;',
+
       '"':'&quot;',
+
       "'":'&#039;'
+
     }[m])
+
   );
 
 }
+
 
 
 function escapeAttr(s){
@@ -900,13 +2101,18 @@ function escapeAttr(s){
 }
 
 
+
 /* =========================================================
-   STARTSEITE LADEN
+   START
    ========================================================= */
 
-renderHome();
+
+loadQuestions();
+
 
 </script>
 
 </body>
+
 </html>
+```
