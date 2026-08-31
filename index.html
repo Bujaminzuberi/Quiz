@@ -189,31 +189,34 @@ textarea:focus{
    ===================================================== */
 
 .matching-list{
-  margin-top:18px
+  margin-top:14px
 }
 
 .matching-row{
   display:grid;
-  grid-template-columns:1fr 70px;
-  gap:12px;
+  grid-template-columns:minmax(0,1fr) 48px;
+  gap:8px;
   align-items:center;
-  padding:12px 0;
+  padding:8px 0;
   border-bottom:1px solid #e5e7eb
 }
 
 .matching-term{
-  font-weight:700
+  font-weight:700;
+  font-size:15px;
+  line-height:1.3;
 }
 
 .matching-input{
-  width:70px;
-  height:48px;
+ width:48px;
+  height:38px;
+  padding:0;
   text-align:center;
   text-transform:uppercase;
-  font-size:18px;
+  font-size:16px;
   font-weight:800;
   border:2px solid #e5e7eb;
-  border-radius:10px;
+  border-radius:8px;
   outline:none
 }
 
@@ -222,27 +225,72 @@ textarea:focus{
 }
 
 .matching-answers{
-  margin-top:25px;
-  padding:16px;
+  margin-top:16px;
+  padding:12px;
   background:#f9fafb;
-  border-radius:12px
+  border-radius:10px
+}
+
+.matching-answers h3{
+  font-size:16px;
+  margin:4px 0 8px
 }
 
 .matching-answer{
-  padding:8px 0;
-  line-height:1.4
+  padding:5px 0;
+  line-height:1.3;
+  font-size:14px
 }
-
+  
 .matching-letter{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width:30px;
-  height:30px;
-  margin-right:8px;
+  width:26px;
+  height:26px;
+  margin-right:6px;
   background:#e5e7eb;
-  border-radius:7px;
+  border-radius:6px;
+  font-size:13px;
   font-weight:800
+}
+
+@media(max-width:600px){
+
+  .matching-row{
+    grid-template-columns:minmax(0,1fr) 44px;
+    gap:6px;
+    padding:7px 0;
+  }
+
+  .matching-term{
+    font-size:14px;
+  }
+
+  .matching-input{
+    width:44px;
+    height:36px;
+    font-size:15px;
+    border-radius:7px;
+  }
+
+  .matching-answers{
+    margin-top:12px;
+    padding:10px;
+  }
+
+  .matching-answer{
+    font-size:13px;
+    padding:4px 0;
+  }
+
+  .matching-letter{
+    width:24px;
+    height:24px;
+    margin-right:5px;
+    font-size:12px;
+  }
+
 }
 
 
