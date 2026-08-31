@@ -185,43 +185,26 @@ textarea:focus{
 
 
 /* =====================================================
-   MINICASE
+   MINI CASE
    ===================================================== */
 
 .case-box{
-  margin:18px 0;
-  padding:18px;
-  border:2px solid #e5e7eb;
-  border-radius:14px;
-  background:#f9fafb
-}
-
-.case-label{
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.05em;
-  color:#6b7280;
-  text-transform:uppercase;
-  margin-bottom:6px
+  background:#f9fafb;
+  border-left:5px solid #111827;
+  border-radius:12px;
+  padding:16px;
+  margin:16px 0 20px
 }
 
 .case-title{
   font-size:20px;
   font-weight:800;
-  margin-bottom:12px
+  margin-bottom:10px
 }
 
 .case-text{
   line-height:1.6;
   white-space:pre-wrap
-}
-
-.case-question{
-  margin-top:18px;
-  padding:14px;
-  border-left:4px solid #111827;
-  background:#f9fafb;
-  border-radius:0 10px 10px 0
 }
 
 
@@ -317,11 +300,6 @@ textarea:focus{
   background:#fffbeb
 }
 
-.result-case{
-  border:2px solid #c7d2fe;
-  background:#eef2ff
-}
-
 .result-correct{
   border:2px solid #bbf7d0;
   background:#f0fdf4
@@ -344,12 +322,6 @@ textarea:focus{
   border-top:1px solid #fecaca
 }
 
-.case-result-question{
-  margin-top:16px;
-  padding-top:12px;
-  border-top:1px solid #c7d2fe
-}
-
 
 /* =====================================================
    MOBILE
@@ -358,11 +330,11 @@ textarea:focus{
 @media(max-width:600px){
 
   .app{
-    padding:14px
+    padding:12px
   }
 
   .card{
-    padding:16px
+    padding:15px
   }
 
   .matching-row{
@@ -400,7 +372,8 @@ textarea:focus{
   }
 
   .case-box{
-    padding:14px
+    padding:13px;
+    margin:12px 0 16px
   }
 
   .case-title{
@@ -408,9 +381,24 @@ textarea:focus{
   }
 
   .case-text{
-    font-size:15px
+    font-size:14px
   }
 
+}
+
+
+/* =====================================================
+   CASE FRAGE ZÄHLER
+   ===================================================== */
+
+.case-question{
+  display:inline-block;
+  margin-bottom:8px;
+  padding:5px 9px;
+  border-radius:8px;
+  background:#e5e7eb;
+  font-size:12px;
+  font-weight:700
 }
 
 </style>
@@ -508,7 +496,32 @@ textarea:focus{
       </div>
 
 
-      <div id="caseDisplay"></div>
+      <!-- MINI CASE -->
+
+      <div
+        id="caseBox"
+        class="case-box hidden"
+      >
+
+        <div
+          id="caseTitle"
+          class="case-title"
+        ></div>
+
+        <div
+          id="caseText"
+          class="case-text"
+        ></div>
+
+      </div>
+
+
+      <!-- CASE FRAGE NUMMER -->
+
+      <div
+        id="caseQuestion"
+        class="case-question hidden"
+      ></div>
 
 
       <h2 id="question"></h2>
@@ -627,8 +640,6 @@ let wrongQuestions = [];
 
 let openQuestions = [];
 
-let caseQuestions = [];
-
 
 /* =========================================================
    HTML ELEMENT
@@ -740,7 +751,6 @@ function parseCSV(text){
 
       }
 
-
       row.push(
         cell.trim()
       );
@@ -801,7 +811,7 @@ function parseCSV(text){
 
 
 /* =========================================================
-   QUIZZES AUS GOOGLE SHEET ERSTELLEN
+   GOOGLE SHEET IN QUIZZES UMWANDELN
    ========================================================= */
 
 function buildQuizzes(csv){
@@ -859,8 +869,8 @@ function buildQuizzes(csv){
 
   /* CASE SPALTEN */
 
-  const caseIdIndex =
-    headers.indexOf("case_id");
+  const caseIndex =
+    headers.indexOf("case");
 
   const caseTitleIndex =
     headers.indexOf("case_title");
@@ -869,7 +879,7 @@ function buildQuizzes(csv){
     headers.indexOf("case_text");
 
 
-  /* ZUORDNUNG */
+  /* MATCHING SPALTEN */
 
   const matchAIndex =
     headers.indexOf("matcha");
@@ -890,12 +900,11 @@ function buildQuizzes(csv){
   if(
     quizIndex === -1 ||
     questionIndex === -1 ||
-    typeIndex === -1 ||
-    correctIndex === -1
+    typeIndex === -1
   ){
 
     throw new Error(
-      "Benötigte Spalten fehlen: quiz, question, type, correct"
+      "Benötigte Spalten fehlen: quiz, question, type"
     );
 
   }
@@ -960,6 +969,7 @@ function buildQuizzes(csv){
 
         const correct =
 
+          correctIndex !== -1 &&
           row[correctIndex]
 
             ? row[correctIndex]
@@ -975,7 +985,7 @@ function buildQuizzes(csv){
             : [];
 
 
-        /* ZUORDNUNG */
+        /* MATCHING */
 
         const matching = [];
 
@@ -1029,14 +1039,14 @@ function buildQuizzes(csv){
         }
 
 
-        /* MINICASE */
+        /* CASE INFORMATIONEN */
 
         const caseId =
 
-          caseIdIndex !== -1 &&
-          row[caseIdIndex]
+          caseIndex !== -1 &&
+          row[caseIndex]
 
-            ? row[caseIdIndex].trim()
+            ? row[caseIndex].trim()
 
             : "";
 
@@ -1089,17 +1099,9 @@ function buildQuizzes(csv){
           matching:matching,
 
 
-          caseId:caseId,
-
-
-          caseTitle:caseTitle,
-
-
-          caseText:caseText,
-
-
           points:
 
+            pointsIndex !== -1 &&
             row[pointsIndex] &&
             !isNaN(
               Number(
@@ -1111,7 +1113,19 @@ function buildQuizzes(csv){
                   row[pointsIndex]
                 )
 
-              : 1
+              : 1,
+
+
+          case:
+            caseId,
+
+
+          case_title:
+            caseTitle,
+
+
+          case_text:
+            caseText
 
         };
 
@@ -1126,8 +1140,6 @@ function buildQuizzes(csv){
         (
 
           q.type === "open" ||
-
-          q.type === "case" ||
 
           q.type === "matching" ||
 
@@ -1427,9 +1439,7 @@ function show(id){
     'quiz',
     'result'
 
-  ]
-
-  .forEach(x => {
+  ].forEach(x => {
 
     $(x).classList.toggle(
       'hidden',
@@ -1560,39 +1570,34 @@ function startQuiz(id){
   }
 
 
+  /*
+   * WICHTIG:
+   *
+   * Normale Fragen werden gemischt.
+   *
+   * Case Fragen werden als kompletter Block
+   * zusammengehalten.
+   */
+
+  const questions =
+    buildQuestionOrder(
+      originalQuiz.questions
+    );
+
+
   currentQuiz = {
 
     ...originalQuiz,
 
-
     questions:
 
-      shuffle(
-        originalQuiz.questions
-      )
-
-      .map(q => {
+      questions.map(q => {
 
 
         /* OFFENE FRAGE */
 
         if(
           q.type === "open"
-        ){
-
-          return {
-
-            ...q
-
-          };
-
-        }
-
-
-        /* MINICASE */
-
-        if(
-          q.type === "case"
         ){
 
           return {
@@ -1708,8 +1713,6 @@ function startQuiz(id){
 
   openQuestions = [];
 
-  caseQuestions = [];
-
 
   $('title').textContent =
     currentQuiz.title;
@@ -1718,6 +1721,103 @@ function startQuiz(id){
   show('quiz');
 
   renderQuestion();
+
+}
+
+
+/* =========================================================
+   FRAGEN SORTIEREN
+   ========================================================= */
+
+function buildQuestionOrder(questions){
+
+  const blocks = [];
+
+  const usedCases = new Set();
+
+
+  /*
+   * Zuerst alle Case Blöcke erkennen.
+   */
+
+  questions.forEach(q => {
+
+    if(
+      q.case &&
+      !usedCases.has(q.case)
+    ){
+
+      const caseQuestions =
+
+        questions.filter(
+          x =>
+            x.case === q.case
+        );
+
+
+      blocks.push({
+
+        type:"case",
+
+        caseId:
+          q.case,
+
+        questions:
+          caseQuestions
+
+      });
+
+
+      usedCases.add(q.case);
+
+    }
+
+  });
+
+
+  /*
+   * Normale Fragen einzeln als Block.
+   */
+
+  questions.forEach(q => {
+
+    if(!q.case){
+
+      blocks.push({
+
+        type:"normal",
+
+        questions:[q]
+
+      });
+
+    }
+
+  });
+
+
+  /*
+   * Die Blöcke werden gemischt.
+   *
+   * Dadurch kann ein kompletter Case
+   * an einer anderen Stelle erscheinen.
+   *
+   * Die Fragen innerhalb des Cases
+   * bleiben aber unverändert.
+   */
+
+  const shuffledBlocks =
+    shuffle(blocks);
+
+
+  /*
+   * Blöcke wieder zu Fragen zusammenführen.
+   */
+
+  return shuffledBlocks.flatMap(
+    block =>
+      block.questions
+  );
 
 }
 
@@ -1757,9 +1857,6 @@ function renderQuestion(){
     q.question;
 
 
-  $('caseDisplay').innerHTML = "";
-
-
   $('nextBtn').textContent =
 
     current ===
@@ -1770,112 +1867,84 @@ function renderQuestion(){
       : 'Weiter';
 
 
-  /* =====================================================
-     MINICASE
-     ===================================================== */
+  /*
+   * CASE ANZEIGEN
+   */
 
   if(
-    q.type === "case"
+    q.case
   ){
 
-    $('typeHint').textContent =
-      "Minicase";
+    $('caseBox')
+      .classList.remove(
+        'hidden'
+      );
+
+
+    $('caseTitle').textContent =
+
+      q.case_title ||
+      getCaseTitle(q);
+
+
+    $('caseText').textContent =
+
+      q.case_text ||
+      getCaseText(q);
 
 
     /*
-     * Situation anzeigen
+     * Nummer der Frage innerhalb
+     * des Cases anzeigen
      */
 
-    if(
-      q.caseId
-    ){
+    const caseQuestions =
 
-      $('caseDisplay').innerHTML = `
-
-        <div class="case-box">
-
-          <div class="case-label">
-
-            Situation
-
-          </div>
+      currentQuiz.questions.filter(
+        x =>
+          x.case === q.case
+      );
 
 
-          ${
-            q.caseTitle
+    const caseNumber =
 
-              ? `
-
-                <div class="case-title">
-
-                  ${escapeHtml(
-                    q.caseTitle
-                  )}
-
-                </div>
-
-              `
-
-              : ""
-
-          }
+      caseQuestions.findIndex(
+        x =>
+          x === q
+      ) + 1;
 
 
-          <div class="case-text">
+    $('caseQuestion').textContent =
 
-            ${escapeHtml(
-              q.caseText || ""
-            )}
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
+      `Mini Case Frage ${caseNumber} von ${caseQuestions.length}`;
 
 
-    $('question').innerHTML = `
+    $('caseQuestion')
+      .classList.remove(
+        'hidden'
+      );
 
-      <div class="case-question">
+  }
 
-        ${escapeHtml(
-          q.question
-        )}
+  else{
 
-      </div>
-
-    `;
-
-
-    $('options').innerHTML = `
-
-      <textarea
-
-        id="caseAnswer"
-
-        placeholder="Schreibe deine Antwort hier ..."
-
-        oninput="checkCaseAnswer()"
-
-      ></textarea>
-
-    `;
+    $('caseBox')
+      .classList.add(
+        'hidden'
+      );
 
 
-    $('nextBtn').disabled =
-      true;
-
-
-    return;
+    $('caseQuestion')
+      .classList.add(
+        'hidden'
+      );
 
   }
 
 
-  /* =====================================================
-     OFFENE FRAGE
-     ===================================================== */
+  /*
+   * OFFENE FRAGE
+   */
 
   if(
     q.type === "open"
@@ -1888,13 +1957,9 @@ function renderQuestion(){
     $('options').innerHTML = `
 
       <textarea
-
         id="openAnswer"
-
         placeholder="Schreibe deine Antwort hier ..."
-
         oninput="checkOpenAnswer()"
-
       ></textarea>
 
     `;
@@ -1909,9 +1974,9 @@ function renderQuestion(){
   }
 
 
-  /* =====================================================
-     ZUORDNUNG
-     ===================================================== */
+  /*
+   * ZUORDNUNGSFRAGE
+   */
 
   if(
     q.type === "matching"
@@ -2056,9 +2121,9 @@ function renderQuestion(){
   }
 
 
-  /* =====================================================
-     SINGLE / MULTI
-     ===================================================== */
+  /*
+   * SINGLE / MULTI
+   */
 
   $('typeHint').textContent =
 
@@ -2132,49 +2197,43 @@ function renderQuestion(){
 
 
 /* =========================================================
-   MINICASE ANTWORT PRÜFEN
+   CASE TITEL SUCHEN
    ========================================================= */
 
-function checkCaseAnswer(){
+function getCaseTitle(q){
 
-  const input =
-    $('caseAnswer');
-
-
-  if(!input){
-
-    return;
-
-  }
+  const found =
+    currentQuiz.questions.find(
+      x =>
+        x.case === q.case &&
+        x.case_title
+    );
 
 
-  $('nextBtn').disabled =
-
-    input.value.trim().length === 0;
+  return found
+    ? found.case_title
+    : q.case;
 
 }
 
 
 /* =========================================================
-   OFFENE FRAGE PRÜFEN
+   CASE TEXT SUCHEN
    ========================================================= */
 
-function checkOpenAnswer(){
+function getCaseText(q){
 
-  const input =
-    $('openAnswer');
-
-
-  if(!input){
-
-    return;
-
-  }
+  const found =
+    currentQuiz.questions.find(
+      x =>
+        x.case === q.case &&
+        x.case_text
+    );
 
 
-  $('nextBtn').disabled =
-
-    input.value.trim().length === 0;
+  return found
+    ? found.case_text
+    : "";
 
 }
 
@@ -2186,6 +2245,7 @@ function checkOpenAnswer(){
 function handleMatchingInput(input){
 
   input.value =
+
     input.value
       .toUpperCase()
       .replace(
@@ -2233,6 +2293,30 @@ function handleMatchingInput(input){
   $('nextBtn').disabled =
     !allFilled ||
     !allValid;
+
+}
+
+
+/* =========================================================
+   OFFENE FRAGE
+   ========================================================= */
+
+function checkOpenAnswer(){
+
+  const input =
+    $('openAnswer');
+
+
+  if(!input){
+
+    return;
+
+  }
+
+
+  $('nextBtn').disabled =
+
+    input.value.trim().length === 0;
 
 }
 
@@ -2318,72 +2402,9 @@ function nextQuestion(){
     currentQuiz.questions[current];
 
 
-  /* =====================================================
-     MINICASE
-     ===================================================== */
-
-  if(
-    q.type === "case"
-  ){
-
-    const answer =
-      $('caseAnswer')
-        ? $('caseAnswer')
-            .value
-            .trim()
-        : "";
-
-
-    caseQuestions.push({
-
-      caseId:
-        q.caseId,
-
-      caseTitle:
-        q.caseTitle,
-
-      caseText:
-        q.caseText,
-
-      question:
-        q.question,
-
-      answer:
-        answer,
-
-      points:
-        q.points || 1
-
-    });
-
-
-    current++;
-
-
-    if(
-      current >=
-      currentQuiz.questions.length
-    ){
-
-      showResult();
-
-    }
-
-    else{
-
-      renderQuestion();
-
-    }
-
-
-    return;
-
-  }
-
-
-  /* =====================================================
-     OFFENE FRAGE
-     ===================================================== */
+  /*
+   * OFFENE FRAGE
+   */
 
   if(
     q.type === "open"
@@ -2438,9 +2459,9 @@ function nextQuestion(){
   }
 
 
-  /* =====================================================
-     ZUORDNUNG
-     ===================================================== */
+  /*
+   * ZUORDNUNG
+   */
 
   if(
     q.type === "matching"
@@ -2573,9 +2594,9 @@ function nextQuestion(){
   }
 
 
-  /* =====================================================
-     SINGLE / MULTI
-     ===================================================== */
+  /*
+   * SINGLE / MULTI
+   */
 
   const correct =
     [...q.correct].sort();
@@ -2663,8 +2684,7 @@ function showResult(){
       (sum,q) => {
 
         if(
-          q.type === "open" ||
-          q.type === "case"
+          q.type === "open"
         ){
 
           return sum;
@@ -2721,20 +2741,14 @@ function showResult(){
 
 
   if(
-    caseQuestions.length > 0 ||
     openQuestions.length > 0
   ){
-
-    let manualCount =
-      caseQuestions.length +
-      openQuestions.length;
-
 
     $('resultText').textContent =
 
       `${pct}% automatisch richtig. ` +
-      `${manualCount} offene Antwort(en) ` +
-      `müssen manuell bewertet werden.`;
+      `${openQuestions.length} offene ` +
+      `Frage(n) müssen manuell bewertet werden.`;
 
   }
 
@@ -2753,7 +2767,7 @@ function showResult(){
 
 
 /* =========================================================
-   ERGEBNIS DETAILS
+   FALSCHE FRAGEN
    ========================================================= */
 
 function renderWrongQuestions(){
@@ -2761,9 +2775,9 @@ function renderWrongQuestions(){
   let html = "";
 
 
-  /* =====================================================
-     SINGLE / MULTI
-     ===================================================== */
+  /*
+   * SINGLE / MULTI
+   */
 
   wrongQuestions
 
@@ -2891,9 +2905,9 @@ function renderWrongQuestions(){
     );
 
 
-  /* =====================================================
-     ZUORDNUNGSFRAGEN
-     ===================================================== */
+  /*
+   * ZUORDNUNG
+   */
 
   wrongQuestions
 
@@ -3011,9 +3025,9 @@ function renderWrongQuestions(){
     );
 
 
-  /* =====================================================
-     OFFENE FRAGEN
-     ===================================================== */
+  /*
+   * OFFENE FRAGEN
+   */
 
   openQuestions.forEach(
     item => {
@@ -3075,7 +3089,6 @@ function renderWrongQuestions(){
                   )
 
                 : "Keine Musterlösung hinterlegt."
-
             }
 
           </div>
@@ -3093,185 +3106,13 @@ function renderWrongQuestions(){
   );
 
 
-  /* =====================================================
-     MINICASE
-     ===================================================== */
-
-  if(
-    caseQuestions.length > 0
-  ){
-
-    /*
-     * Cases gruppieren
-     */
-
-    const cases = {};
-
-
-    caseQuestions.forEach(
-      item => {
-
-        if(
-          !cases[item.caseId]
-        ){
-
-          cases[item.caseId] = {
-
-            title:
-              item.caseTitle,
-
-            text:
-              item.caseText,
-
-            questions:[]
-
-          };
-
-        }
-
-
-        cases[item.caseId]
-          .questions
-          .push(item);
-
-      }
-    );
-
-
-    Object.keys(cases)
-      .forEach(
-        caseId => {
-
-          const caseData =
-            cases[caseId];
-
-
-          html += `
-
-            <div class="result-box result-case">
-
-              <h3>
-                📋 Minicase
-              </h3>
-
-
-              <div class="case-title">
-
-                ${escapeHtml(
-                  caseData.title ||
-                  "Minicase"
-                )}
-
-              </div>
-
-
-              ${
-                caseData.text
-
-                  ? `
-
-                    <div class="case-text">
-
-                      ${escapeHtml(
-                        caseData.text
-                      )}
-
-                    </div>
-
-                  `
-
-                  : ""
-
-              }
-
-
-              ${
-                caseData.questions
-
-                  .map(
-                    (item,index) => `
-
-                      <div class="case-result-question">
-
-                        <div class="answer-label">
-
-                          Frage ${
-                            index + 1
-                          }
-
-                        </div>
-
-
-                        <p>
-
-                          <b>
-
-                            ${escapeHtml(
-                              item.question
-                            )}
-
-                          </b>
-
-                        </p>
-
-
-                        <div class="answer-label">
-
-                          Deine Antwort
-
-                        </div>
-
-
-                        <div class="answer-text">
-
-                          ${
-                            item.answer
-
-                              ? escapeHtml(
-                                  item.answer
-                                )
-
-                              : "Keine Antwort"
-                          }
-
-                        </div>
-
-
-                        <span class="badge">
-
-                          Manuell bewerten
-                          ·
-                          ${item.points} Punkte
-
-                        </span>
-
-                      </div>
-
-                    `
-                  )
-
-                  .join("")
-
-              }
-
-            </div>
-
-          `;
-
-        }
-      );
-
-  }
-
-
-  /* =====================================================
-     ALLES RICHTIG
-     ===================================================== */
+  /*
+   * Alles richtig
+   */
 
   if(
     wrongQuestions.length === 0 &&
-    openQuestions.length === 0 &&
-    caseQuestions.length === 0
+    openQuestions.length === 0
   ){
 
     html = `
@@ -3329,13 +3170,9 @@ function escapeHtml(s){
     m => ({
 
       '&':'&amp;',
-
       '<':'&lt;',
-
       '>':'&gt;',
-
       '"':'&quot;',
-
       "'":'&#039;'
 
     }[m])
