@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="de">
 
@@ -5,15 +6,9 @@
 
 <meta charset="utf-8">
 
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1"
->
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<meta
-  name="theme-color"
-  content="#111827"
->
+<meta name="theme-color" content="#111827">
 
 <title>Quiz Training</title>
 
@@ -24,19 +19,12 @@
   box-sizing:border-box
 }
 
-
 body{
   margin:0;
-  font-family:
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    sans-serif;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
   background:#f3f4f6;
   color:#111827
 }
-
 
 .app{
   max-width:720px;
@@ -45,7 +33,6 @@ body{
   padding:20px
 }
 
-
 .top{
   display:flex;
   justify-content:space-between;
@@ -53,23 +40,24 @@ body{
   margin-bottom:20px
 }
 
-
 h1{
   font-size:30px;
   margin:8px 0
 }
-
 
 h2{
   font-size:22px;
   margin:8px 0
 }
 
+h3{
+  font-size:18px;
+  margin:8px 0
+}
 
 .muted{
   color:#6b7280
 }
-
 
 .card{
   background:white;
@@ -78,7 +66,6 @@ h2{
   margin:14px 0;
   box-shadow:0 5px 20px #0000000d
 }
-
 
 .btn{
   width:100%;
@@ -93,18 +80,15 @@ h2{
   margin-top:12px
 }
 
-
 .btn.secondary{
   background:#e5e7eb;
   color:#111827
 }
 
-
 .btn:disabled{
   opacity:.45;
   cursor:not-allowed
 }
-
 
 .option{
   display:flex;
@@ -117,18 +101,15 @@ h2{
   cursor:pointer
 }
 
-
 .option.selected{
   border-color:#111827;
   background:#f9fafb
 }
 
-
 .option input{
   margin-top:3px;
   transform:scale(1.2)
 }
-
 
 .progress{
   height:8px;
@@ -138,13 +119,11 @@ h2{
   margin:15px 0
 }
 
-
 .bar{
   height:100%;
   background:#111827;
   width:0
 }
-
 
 .badge{
   display:inline-block;
@@ -155,7 +134,6 @@ h2{
   font-weight:700
 }
 
-
 .score{
   font-size:48px;
   font-weight:800;
@@ -163,22 +141,18 @@ h2{
   margin:20px 0
 }
 
-
 .hidden{
   display:none
 }
-
 
 .small{
   font-size:13px
 }
 
-
 .error{
   color:#dc2626;
   font-weight:600
 }
-
 
 .loading{
   text-align:center;
@@ -186,12 +160,96 @@ h2{
   color:#6b7280
 }
 
-
 .status{
   font-size:12px;
   color:#6b7280;
   margin-top:8px;
   text-align:center
+}
+
+textarea{
+  width:100%;
+  min-height:150px;
+  resize:vertical;
+  border:2px solid #e5e7eb;
+  border-radius:12px;
+  padding:14px;
+  font-family:inherit;
+  font-size:16px;
+  line-height:1.5;
+  outline:none
+}
+
+textarea:focus{
+  border-color:#111827
+}
+
+.matching-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:1px solid #e5e7eb
+}
+
+.matching-term{
+  font-weight:700
+}
+
+.matching-select{
+  width:100%;
+  padding:12px;
+  border:2px solid #e5e7eb;
+  border-radius:10px;
+  background:white;
+  font-size:15px
+}
+
+.matching-select:focus{
+  outline:none;
+  border-color:#111827
+}
+
+.result-box{
+  border-radius:12px;
+  padding:14px;
+  margin:12px 0
+}
+
+.result-wrong{
+  border:2px solid #fecaca;
+  background:#fef2f2
+}
+
+.result-open{
+  border:2px solid #fde68a;
+  background:#fffbeb
+}
+
+.result-correct{
+  border:2px solid #bbf7d0;
+  background:#f0fdf4
+}
+
+.answer-label{
+  font-size:13px;
+  color:#6b7280;
+  margin-bottom:4px
+}
+
+.answer-text{
+  margin:4px 0 12px;
+  font-weight:600;
+  white-space:pre-wrap
+}
+
+@media(max-width:600px){
+
+  .matching-row{
+    grid-template-columns:1fr
+  }
+
 }
 
 </style>
@@ -222,19 +280,18 @@ h2{
   </div>
 
 
-
-  <!-- QUIZ AUSWAHL -->
+  <!-- =====================================================
+       QUIZ AUSWAHL
+       ===================================================== -->
 
   <section id="home">
 
     <p class="muted">
 
-      Die Quizzes dürfen ausschliesslich
-      für interne Zwecke im Rahmen der
-      Ausbildung verwendet werden.
-      Nach erfolgreichem Abschluss der
-      Lehre werden sämtliche Quizzes und
-      die damit verbundenen Daten gelöscht.
+      Die Quizzes dürfen ausschliesslich für interne Zwecke
+      im Rahmen der Ausbildung verwendet werden.
+      Nach erfolgreichem Abschluss der Lehre werden
+      sämtliche Quizzes und die damit verbundenen Daten gelöscht.
 
       <b>Bujamin.Zuberi</b>
 
@@ -244,9 +301,7 @@ h2{
     <div id="quizList">
 
       <div class="loading">
-
         Fragen werden geladen ...
-
       </div>
 
     </div>
@@ -260,8 +315,9 @@ h2{
   </section>
 
 
-
-  <!-- QUIZ -->
+  <!-- =====================================================
+       QUIZ
+       ===================================================== -->
 
   <section id="quiz" class="hidden">
 
@@ -270,9 +326,7 @@ h2{
       class="btn secondary"
       onclick="showHome()"
     >
-
       ← Quiz Auswahl
-
     </button>
 
 
@@ -313,9 +367,7 @@ h2{
         onclick="nextQuestion()"
         disabled
       >
-
         Weiter
-
       </button>
 
 
@@ -324,8 +376,9 @@ h2{
   </section>
 
 
-
-  <!-- ERGEBNIS -->
+  <!-- =====================================================
+       ERGEBNIS
+       ===================================================== -->
 
   <section id="result" class="hidden">
 
@@ -356,9 +409,7 @@ h2{
         class="btn"
         onclick="restart()"
       >
-
         Noch einmal
-
       </button>
 
 
@@ -366,9 +417,7 @@ h2{
         class="btn secondary"
         onclick="showHome()"
       >
-
         Zur Quiz Auswahl
-
       </button>
 
 
@@ -399,7 +448,7 @@ const SHEET_URL =
 
 
 const CACHE_KEY =
-  "quiz_training_questions_v1";
+  "quiz_training_questions_v2";
 
 
 /* =========================================================
@@ -418,6 +467,8 @@ let points = 0;
 let selected = [];
 
 let wrongQuestions = [];
+
+let openQuestions = [];
 
 
 
@@ -453,8 +504,8 @@ function shuffle(array){
       );
 
 
-    [arr[i], arr[j]] =
-      [arr[j], arr[i]];
+    [arr[i],arr[j]] =
+      [arr[j],arr[i]];
 
   }
 
@@ -518,7 +569,9 @@ function parseCSV(text){
       !insideQuotes
     ){
 
-      row.push(cell.trim());
+      row.push(
+        cell.trim()
+      );
 
       cell = "";
 
@@ -541,7 +594,9 @@ function parseCSV(text){
       }
 
 
-      row.push(cell.trim());
+      row.push(
+        cell.trim()
+      );
 
       cell = "";
 
@@ -576,7 +631,9 @@ function parseCSV(text){
     row.length > 0
   ){
 
-    row.push(cell.trim());
+    row.push(
+      cell.trim()
+    );
 
 
     if(
@@ -621,9 +678,7 @@ function buildQuizzes(csv){
   const headers =
     rows[0].map(
       x =>
-        x
-          .trim()
-          .toLowerCase()
+        x.trim().toLowerCase()
     );
 
 
@@ -647,15 +702,35 @@ function buildQuizzes(csv){
 
   const dIndex =
     headers.indexOf("d");
-  
+
   const eIndex =
-  headers.indexOf("e");
+    headers.indexOf("e");
 
   const correctIndex =
     headers.indexOf("correct");
 
   const pointsIndex =
     headers.indexOf("points");
+
+
+  /*
+   * Zusätzliche Spalten für Zuordnungsfragen
+   */
+
+  const matchAIndex =
+    headers.indexOf("matcha");
+
+  const matchBIndex =
+    headers.indexOf("matchb");
+
+  const matchCIndex =
+    headers.indexOf("matchc");
+
+  const matchDIndex =
+    headers.indexOf("matchd");
+
+  const matchEIndex =
+    headers.indexOf("matche");
 
 
   if(
@@ -679,6 +754,18 @@ function buildQuizzes(csv){
       .map(row => {
 
 
+        const type =
+          row[typeIndex]
+            ? row[typeIndex]
+                .trim()
+                .toLowerCase()
+            : "single";
+
+
+        /*
+         * Normale Antworten A bis E
+         */
+
         const options = [];
 
 
@@ -689,12 +776,8 @@ function buildQuizzes(csv){
         ){
 
           options.push({
-
             id:"A",
-
-            text:
-              row[aIndex].trim()
-
+            text:row[aIndex].trim()
           });
 
         }
@@ -707,12 +790,8 @@ function buildQuizzes(csv){
         ){
 
           options.push({
-
             id:"B",
-
-            text:
-              row[bIndex].trim()
-
+            text:row[bIndex].trim()
           });
 
         }
@@ -725,12 +804,8 @@ function buildQuizzes(csv){
         ){
 
           options.push({
-
             id:"C",
-
-            text:
-              row[cIndex].trim()
-
+            text:row[cIndex].trim()
           });
 
         }
@@ -743,35 +818,99 @@ function buildQuizzes(csv){
         ){
 
           options.push({
-
             id:"D",
-
-            text:
-              row[dIndex].trim()
-
+            text:row[dIndex].trim()
           });
 
         }
 
+
+        if(
+          eIndex !== -1 &&
+          row[eIndex] &&
+          row[eIndex].trim() !== ""
+        ){
+
+          options.push({
+            id:"E",
+            text:row[eIndex].trim()
+          });
+
+        }
+
+
+        /*
+         * Richtige Antworten
+         */
 
         const correct =
 
           row[correctIndex]
 
             ? row[correctIndex]
-
                 .split(",")
-
                 .map(
                   x =>
                     x
                       .trim()
                       .toUpperCase()
                 )
-
                 .filter(Boolean)
 
             : [];
+
+
+        /*
+         * Zuordnungsdaten
+         */
+
+        const matching = [];
+
+
+        if(
+          type === "matching"
+        ){
+
+          const terms = [
+            [aIndex,matchAIndex],
+            [bIndex,matchBIndex],
+            [cIndex,matchCIndex],
+            [dIndex,matchDIndex],
+            [eIndex,matchEIndex]
+          ];
+
+
+          terms.forEach(
+            ([termIndex,matchIndex]) => {
+
+              if(
+                termIndex !== -1 &&
+                matchIndex !== -1 &&
+                row[termIndex] &&
+                row[matchIndex]
+              ){
+
+                matching.push({
+
+                  id:
+                    String.fromCharCode(
+                      65 + matching.length
+                    ),
+
+                  term:
+                    row[termIndex].trim(),
+
+                  answer:
+                    row[matchIndex].trim()
+
+                });
+
+              }
+
+            }
+          );
+
+        }
 
 
         return {
@@ -788,18 +927,16 @@ function buildQuizzes(csv){
               : "",
 
 
-          type:
-            row[typeIndex]
-              ? row[typeIndex]
-                  .trim()
-                  .toLowerCase()
-              : "single",
+          type:type,
 
 
-          options: options,
+          options:options,
 
 
-          correct: correct,
+          correct:correct,
+
+
+          matching:matching,
 
 
           points:
@@ -826,8 +963,17 @@ function buildQuizzes(csv){
 
         q.quiz &&
         q.question &&
-        q.options.length > 0 &&
-        q.correct.length > 0
+
+        (
+          q.type === "open" ||
+
+          q.type === "matching" ||
+
+          (
+            q.options.length > 0 &&
+            q.correct.length > 0
+          )
+        )
 
       );
 
@@ -846,19 +992,7 @@ function buildQuizzes(csv){
     }
 
 
-    quizMap[q.quiz].push({
-
-      question:q.question,
-
-      type:q.type,
-
-      options:q.options,
-
-      correct:q.correct,
-
-      points:q.points
-
-    });
+    quizMap[q.quiz].push(q);
 
   });
 
@@ -899,7 +1033,7 @@ function buildQuizzes(csv){
 
 
 /* =========================================================
-   QUIZ AUS CACHE LADEN
+   CACHE LADEN
    ========================================================= */
 
 
@@ -937,11 +1071,6 @@ function loadFromCache(){
     QUIZZES = data;
 
 
-    console.log(
-      "Quiz aus Cache geladen."
-    );
-
-
     return true;
 
   }
@@ -970,13 +1099,6 @@ function loadFromCache(){
 async function updateFromGoogle(){
 
   try{
-
-
-    /*
-     * Cache Busting:
-     * verhindert, dass der Browser
-     * eine alte CSV Version verwendet.
-     */
 
     const url =
       SHEET_URL +
@@ -1021,17 +1143,9 @@ async function updateFromGoogle(){
     }
 
 
-    /*
-     * Neue Daten übernehmen
-     */
-
     QUIZZES =
       newQuizzes;
 
-
-    /*
-     * Im Browser speichern
-     */
 
     localStorage.setItem(
 
@@ -1044,15 +1158,9 @@ async function updateFromGoogle(){
     );
 
 
-    console.log(
-      "Google Sheet aktualisiert."
-    );
-
-
     /*
-     * Anzeige aktualisieren,
-     * aber nur wenn wir gerade
-     * auf der Startseite sind.
+     * Nur aktualisieren,
+     * wenn wir auf der Startseite sind.
      */
 
     if(
@@ -1087,17 +1195,12 @@ async function updateFromGoogle(){
     );
 
 
-    /*
-     * Wenn bereits Cache vorhanden ist,
-     * müssen wir nichts weiter tun.
-     */
-
     if(
       QUIZZES.length > 0
     ){
 
       $('status').textContent =
-        "Offline Version verwendet";
+        "Gespeicherte Version verwendet";
 
     }
 
@@ -1145,18 +1248,9 @@ async function updateFromGoogle(){
 
 function init(){
 
-  /*
-   * 1. Zuerst sofort Cache laden
-   */
-
   const hasCache =
     loadFromCache();
 
-
-  /*
-   * Wenn Cache vorhanden ist,
-   * Quiz sofort anzeigen.
-   */
 
   if(hasCache){
 
@@ -1164,11 +1258,6 @@ function init(){
 
   }
 
-
-  /*
-   * 2. Google Sheet im Hintergrund
-   * aktualisieren.
-   */
 
   updateFromGoogle();
 
@@ -1343,6 +1432,49 @@ function startQuiz(id){
       .map(q => {
 
 
+        /*
+         * OFFENE FRAGE
+         */
+
+        if(
+          q.type === "open"
+        ){
+
+          return {
+
+            ...q
+
+          };
+
+        }
+
+
+        /*
+         * ZUORDNUNGSFRAGE
+         */
+
+        if(
+          q.type === "matching"
+        ){
+
+          return {
+
+            ...q,
+
+            matching:
+              shuffle(
+                q.matching
+              )
+
+          };
+
+        }
+
+
+        /*
+         * SINGLE / MULTI
+         */
+
         const shuffledOptions =
           shuffle(
             q.options
@@ -1421,6 +1553,8 @@ function startQuiz(id){
 
   wrongQuestions = [];
 
+  openQuestions = [];
+
 
   $('title').textContent =
     currentQuiz.title;
@@ -1469,6 +1603,135 @@ function renderQuestion(){
   $('question').textContent =
     q.question;
 
+
+  /*
+   * OFFENE FRAGE
+   */
+
+  if(
+    q.type === "open"
+  ){
+
+    $('typeHint').textContent =
+      "Offene Frage";
+
+
+    $('options').innerHTML = `
+
+      <textarea
+        id="openAnswer"
+        placeholder="Schreibe deine Antwort hier ..."
+        oninput="checkOpenAnswer()"
+      ></textarea>
+
+    `;
+
+
+    $('nextBtn').disabled =
+      true;
+
+
+    return;
+
+  }
+
+
+  /*
+   * ZUORDNUNGSFRAGE
+   */
+
+  if(
+    q.type === "matching"
+  ){
+
+    $('typeHint').textContent =
+      "Ordne jeden Begriff der richtigen Antwort zu";
+
+
+    const answerOptions =
+      shuffle(
+        q.matching.map(
+          x =>
+            x.answer
+        )
+      );
+
+
+    $('options').innerHTML =
+
+      q.matching
+
+        .map(
+          (item,index) => `
+
+            <div class="matching-row">
+
+              <div class="matching-term">
+
+                ${escapeHtml(
+                  item.term
+                )}
+
+              </div>
+
+
+              <select
+                class="matching-select"
+                data-index="${index}"
+                onchange="checkMatching()"
+              >
+
+                <option value="">
+                  Bitte auswählen ...
+                </option>
+
+
+                ${
+                  answerOptions
+
+                    .map(
+                      answer => `
+
+                        <option
+                          value="${escapeAttr(
+                            answer
+                          )}"
+                        >
+
+                          ${escapeHtml(
+                            answer
+                          )}
+
+                        </option>
+
+                      `
+                    )
+
+                    .join('')
+                }
+
+              </select>
+
+            </div>
+
+          `
+        )
+
+        .join('');
+
+
+    $('nextBtn').disabled =
+      true;
+
+
+    return;
+
+  }
+
+
+  /*
+   * SINGLE / MULTI
+   */
 
   $('typeHint').textContent =
 
@@ -1553,7 +1816,62 @@ function renderQuestion(){
 
 
 /* =========================================================
-   ANTWORT AUSWÄHLEN
+   OFFENE FRAGE PRÜFEN
+   ========================================================= */
+
+
+function checkOpenAnswer(){
+
+  const input =
+    $('openAnswer');
+
+
+  if(!input){
+
+    return;
+
+  }
+
+
+  $('nextBtn').disabled =
+
+    input.value.trim().length === 0;
+
+}
+
+
+
+/* =========================================================
+   ZUORDNUNG PRÜFEN
+   ========================================================= */
+
+
+function checkMatching(){
+
+  const selects =
+    [
+      ...document.querySelectorAll(
+        '.matching-select'
+      )
+    ];
+
+
+  const allSelected =
+    selects.every(
+      select =>
+        select.value !== ""
+    );
+
+
+  $('nextBtn').disabled =
+    !allSelected;
+
+}
+
+
+
+/* =========================================================
+   SINGLE / MULTI ANTWORT
    ========================================================= */
 
 
@@ -1636,6 +1954,179 @@ function nextQuestion(){
     currentQuiz.questions[current];
 
 
+  /*
+   * OFFENE FRAGE
+   */
+
+  if(
+    q.type === "open"
+  ){
+
+    const answer =
+      $('openAnswer')
+        ? $('openAnswer')
+            .value
+            .trim()
+        : "";
+
+
+    openQuestions.push({
+
+      question:
+        q.question,
+
+      answer:
+        answer,
+
+      correct:
+        q.correct.join(", "),
+
+      points:
+        q.points || 1
+
+    });
+
+
+    current++;
+
+
+    if(
+      current >=
+      currentQuiz.questions.length
+    ){
+
+      showResult();
+
+    }
+
+    else{
+
+      renderQuestion();
+
+    }
+
+
+    return;
+
+  }
+
+
+
+  /*
+   * ZUORDNUNGSFRAGE
+   */
+
+  if(
+    q.type === "matching"
+  ){
+
+    const selects =
+
+      [
+        ...document.querySelectorAll(
+          '.matching-select'
+        )
+      ];
+
+
+    let correctCount = 0;
+
+
+    const userMatches = [];
+
+
+    q.matching.forEach(
+      (item,index) => {
+
+        const chosen =
+          selects[index].value;
+
+
+        userMatches.push({
+
+          term:
+            item.term,
+
+          chosen:
+            chosen,
+
+          correct:
+            item.answer
+
+        });
+
+
+        if(
+          chosen === item.answer
+        ){
+
+          correctCount++;
+
+        }
+
+      }
+    );
+
+
+    points +=
+      correctCount;
+
+
+    if(
+      correctCount <
+      q.matching.length
+    ){
+
+      wrongQuestions.push({
+
+        type:"matching",
+
+        question:
+          q.question,
+
+        matches:
+          userMatches,
+
+        points:
+          correctCount,
+
+        maxPoints:
+          q.matching.length
+
+      });
+
+    }
+
+
+    current++;
+
+
+    if(
+      current >=
+      currentQuiz.questions.length
+    ){
+
+      showResult();
+
+    }
+
+    else{
+
+      renderQuestion();
+
+    }
+
+
+    return;
+
+  }
+
+
+
+  /*
+   * SINGLE / MULTI
+   */
+
   const correct =
     [...q.correct].sort();
 
@@ -1665,6 +2156,8 @@ function nextQuestion(){
   else{
 
     wrongQuestions.push({
+
+      type:"choice",
 
       question:
         q.question,
@@ -1715,12 +2208,78 @@ function showResult(){
   show('result');
 
 
+  /*
+   * Maximale Punkte
+   */
+
   const max =
 
     currentQuiz.questions.reduce(
 
-      (sum,q) =>
-        sum + (q.points || 1),
+      (sum,q) => {
+
+        if(
+          q.type === "matching"
+        ){
+
+          return (
+            sum +
+            q.matching.length
+          );
+
+        }
+
+
+        return (
+          sum +
+          (q.points || 1)
+        );
+
+      },
+
+      0
+
+    );
+
+
+  /*
+   * Offene Fragen werden nicht
+   * automatisch in die Punktzahl eingerechnet.
+   */
+
+  const automaticMax =
+
+    currentQuiz.questions.reduce(
+
+      (sum,q) => {
+
+        if(
+          q.type === "open"
+        ){
+
+          return sum;
+
+        }
+
+
+        if(
+          q.type === "matching"
+        ){
+
+          return (
+            sum +
+            q.matching.length
+          );
+
+        }
+
+
+        return (
+          sum +
+          (q.points || 1)
+        );
+
+      },
 
       0
 
@@ -1729,10 +2288,12 @@ function showResult(){
 
   const pct =
 
-    max
+    automaticMax
 
       ? Math.round(
-          points / max * 100
+          points /
+          automaticMax *
+          100
         )
 
       : 0;
@@ -1746,35 +2307,418 @@ function showResult(){
 
   $('score').textContent =
 
-    `${points} / ${max}`;
+    `${points} / ${automaticMax}`;
 
 
-  $('resultText').textContent =
+  if(
+    openQuestions.length > 0
+  ){
 
-    `${pct}% richtig.`;
+    $('resultText').textContent =
+
+      `${pct}% automatisch richtig. ` +
+      `${openQuestions.length} offene ` +
+      `Frage(n) müssen manuell bewertet werden.`;
+
+  }
+
+  else{
+
+    $('resultText').textContent =
+
+      `${pct}% richtig.`;
+
+  }
+
+
+  renderWrongQuestions();
+
+}
+
+
+
+/* =========================================================
+   FALSCHE FRAGEN ANZEIGEN
+   ========================================================= */
+
+
+function renderWrongQuestions(){
+
+  let html = "";
+
+
+  /*
+   * Falsche Single / Multi Fragen
+   */
+
+  wrongQuestions
+
+    .filter(
+      item =>
+        item.type === "choice"
+    )
+
+    .forEach(
+      (item,index) => {
+
+        html += `
+
+          <div class="result-box result-wrong">
+
+            <h3>
+
+              ❌ Falsche Frage
+
+            </h3>
+
+
+            <p>
+
+              <b>
+
+                ${escapeHtml(
+                  item.question
+                )}
+
+              </b>
+
+            </p>
+
+
+            <div class="answer-label">
+
+              Deine Antwort
+
+            </div>
+
+
+            <div class="answer-text">
+
+              ${
+                item.selected.length
+
+                  ? item.selected
+
+                      .map(
+                        id => {
+
+                          const option =
+                            item.options.find(
+                              o =>
+                                o.id === id
+                            );
+
+
+                          return option
+
+                            ? escapeHtml(
+                                id +
+                                ". " +
+                                option.text
+                              )
+
+                            : escapeHtml(
+                                id
+                              );
+
+                        }
+                      )
+
+                      .join(", ")
+
+                  : "Keine Antwort"
+              }
+
+            </div>
+
+
+            <div class="answer-label">
+
+              Richtige Antwort
+
+            </div>
+
+
+            <div class="answer-text">
+
+              ${
+                item.correct
+
+                  .map(
+                    id => {
+
+                      const option =
+                        item.options.find(
+                          o =>
+                            o.id === id
+                        );
+
+
+                      return option
+
+                        ? escapeHtml(
+                            id +
+                            ". " +
+                            option.text
+                          )
+
+                        : escapeHtml(
+                            id
+                          );
+
+                    }
+                  )
+
+                  .join(", ")
+
+              }
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    );
 
 
 
   /*
-   * Alles richtig
+   * Falsche Zuordnungen
+   */
+
+  wrongQuestions
+
+    .filter(
+      item =>
+        item.type === "matching"
+    )
+
+    .forEach(
+      item => {
+
+        html += `
+
+          <div class="result-box result-wrong">
+
+            <h3>
+
+              ❌ Zuordnungsfrage
+
+            </h3>
+
+
+            <p>
+
+              <b>
+
+                ${escapeHtml(
+                  item.question
+                )}
+
+              </b>
+
+            </p>
+
+
+            <p class="small">
+
+              ${item.points}
+              von
+              ${item.maxPoints}
+              Zuordnungen richtig.
+
+            </p>
+
+
+            ${
+              item.matches
+
+                .map(
+                  match => `
+
+                    <div
+                      style="
+                        padding:8px 0;
+                        border-top:1px solid #fecaca;
+                      "
+                    >
+
+                      <b>
+
+                        ${escapeHtml(
+                          match.term
+                        )}
+
+                      </b>
+
+                      →
+
+                      ${escapeHtml(
+                        match.chosen ||
+                        "Keine Antwort"
+                      )}
+
+
+                      ${
+                        match.chosen ===
+                        match.correct
+
+                          ? " ✅"
+
+                          : `
+
+                            ❌
+
+                            <br>
+
+                            <span class="small">
+
+                              Richtig:
+
+                              ${escapeHtml(
+                                match.correct
+                              )}
+
+                            </span>
+
+                          `
+
+                      }
+
+                    </div>
+
+                  `
+                )
+
+                .join('')
+            }
+
+          </div>
+
+        `;
+
+      }
+    );
+
+
+
+  /*
+   * Offene Fragen
+   */
+
+  openQuestions.forEach(
+    (item,index) => {
+
+      html += `
+
+        <div class="result-box result-open">
+
+          <h3>
+
+            ✍️ Offene Frage
+
+          </h3>
+
+
+          <p>
+
+            <b>
+
+              ${escapeHtml(
+                item.question
+              )}
+
+            </b>
+
+          </p>
+
+
+          <div class="answer-label">
+
+            Deine Antwort
+
+          </div>
+
+
+          <div class="answer-text">
+
+            ${
+              item.answer
+
+                ? escapeHtml(
+                    item.answer
+                  )
+
+                : "Keine Antwort"
+            }
+
+          </div>
+
+
+          <div class="answer-label">
+
+            Musterlösung
+
+          </div>
+
+
+          <div class="answer-text">
+
+            ${
+              item.correct
+
+                ? escapeHtml(
+                    item.correct
+                  )
+
+                : "Keine Musterlösung hinterlegt."
+
+            }
+
+          </div>
+
+
+          <span class="badge">
+
+            Manuell bewerten
+
+          </span>
+
+        </div>
+
+      `;
+
+    }
+  );
+
+
+
+  /*
+   * Alles richtig und keine offenen Fragen
    */
 
   if(
-    wrongQuestions.length === 0
+    wrongQuestions.length === 0 &&
+    openQuestions.length === 0
   ){
 
-    $('wrongQuestions').innerHTML = `
+    html = `
 
-      <div class="card">
+      <div class="result-box result-correct">
 
-        <h2>
+        <h3>
+
           🎉 Alles richtig!
-        </h2>
+
+        </h3>
+
 
         <p class="muted">
 
-          Du hast alle Fragen
-          richtig beantwortet.
+          Du hast alle automatisch
+          bewertbaren Fragen richtig beantwortet.
 
         </p>
 
@@ -1782,155 +2726,11 @@ function showResult(){
 
     `;
 
-    return;
-
   }
 
 
-
-  /*
-   * Falsche Fragen
-   */
-
-  $('wrongQuestions').innerHTML = `
-
-    <div class="card">
-
-      <h2>
-        Falsch beantwortete Fragen
-      </h2>
-
-
-      ${
-        wrongQuestions
-
-          .map(
-            (item,index) => `
-
-              <div
-
-                style="
-                  border:2px solid #fee2e2;
-                  background:#fef2f2;
-                  border-radius:12px;
-                  padding:14px;
-                  margin:12px 0;
-                "
-
-              >
-
-
-                <b>
-
-                  ${index + 1}.
-                  ${escapeHtml(
-                    item.question
-                  )}
-
-                </b>
-
-
-                <p class="small">
-
-                  Deine Antwort:
-
-                  <strong>
-
-                    ${
-                      item.selected.length
-
-                        ? item.selected
-
-                            .map(
-                              id => {
-
-                                const option =
-                                  item.options.find(
-                                    o =>
-                                      o.id === id
-                                  );
-
-
-                                return option
-
-                                  ? escapeHtml(
-                                      id +
-                                      '. ' +
-                                      option.text
-                                    )
-
-                                  : escapeHtml(
-                                      id
-                                    );
-
-                              }
-                            )
-
-                            .join(', ')
-
-                        : 'Keine Antwort'
-                    }
-
-                  </strong>
-
-                </p>
-
-
-                <p class="small">
-
-                  Richtige Antwort:
-
-                  <strong>
-
-                    ${
-                      item.correct
-
-                        .map(
-                          id => {
-
-                            const option =
-                              item.options.find(
-                                o =>
-                                  o.id === id
-                              );
-
-
-                            return option
-
-                              ? escapeHtml(
-                                  id +
-                                  '. ' +
-                                  option.text
-                                )
-
-                              : escapeHtml(
-                                  id
-                                );
-
-                          }
-                        )
-
-                        .join(', ')
-
-                    }
-
-                  </strong>
-
-                </p>
-
-
-              </div>
-
-            `
-          )
-
-          .join('')
-      }
-
-
-    </div>
-
-  `;
+  $('wrongQuestions').innerHTML =
+    html;
 
 }
 
@@ -1993,3 +2793,4 @@ function escapeAttr(s){
 </body>
 
 </html>
+```
