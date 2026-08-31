@@ -183,9 +183,18 @@ textarea:focus{
   border-color:#111827
 }
 
+
+/* =====================================================
+   ZUORDNUNG
+   ===================================================== */
+
+.matching-list{
+  margin-top:18px
+}
+
 .matching-row{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:1fr 70px;
   gap:12px;
   align-items:center;
   padding:12px 0;
@@ -196,19 +205,50 @@ textarea:focus{
   font-weight:700
 }
 
-.matching-select{
-  width:100%;
-  padding:12px;
+.matching-input{
+  width:70px;
+  height:48px;
+  text-align:center;
+  text-transform:uppercase;
+  font-size:18px;
+  font-weight:800;
   border:2px solid #e5e7eb;
   border-radius:10px;
-  background:white;
-  font-size:15px
+  outline:none
 }
 
-.matching-select:focus{
-  outline:none;
+.matching-input:focus{
   border-color:#111827
 }
+
+.matching-answers{
+  margin-top:25px;
+  padding:16px;
+  background:#f9fafb;
+  border-radius:12px
+}
+
+.matching-answer{
+  padding:8px 0;
+  line-height:1.4
+}
+
+.matching-letter{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:30px;
+  height:30px;
+  margin-right:8px;
+  background:#e5e7eb;
+  border-radius:7px;
+  font-weight:800
+}
+
+
+/* =====================================================
+   ERGEBNIS
+   ===================================================== */
 
 .result-box{
   border-radius:12px;
@@ -243,10 +283,19 @@ textarea:focus{
   white-space:pre-wrap
 }
 
+.result-match{
+  padding:8px 0;
+  border-top:1px solid #fecaca
+}
+
 @media(max-width:600px){
 
   .matching-row{
-    grid-template-columns:1fr
+    grid-template-columns:1fr 60px
+  }
+
+  .matching-input{
+    width:60px
   }
 
 }
@@ -261,6 +310,10 @@ textarea:focus{
 
 <div class="app">
 
+
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
 
   <div class="top">
 
@@ -436,7 +489,6 @@ textarea:focus{
    GOOGLE SHEET
    ========================================================= */
 
-
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVy9kNb6JPXKhhKto_6tauXelFzXS4xOP61q-kaoqzvwVAE628_hXk26SZ-QP4sVQ5j1RiqO0cxxVn/pub?gid=0&single=true&output=csv";
 
@@ -445,7 +497,6 @@ const SHEET_URL =
    CACHE
    ========================================================= */
 
-
 const CACHE_KEY =
   "quiz_training_questions_v2";
 
@@ -453,7 +504,6 @@ const CACHE_KEY =
 /* =========================================================
    QUIZ VARIABLEN
    ========================================================= */
-
 
 let QUIZZES = [];
 
@@ -470,26 +520,21 @@ let wrongQuestions = [];
 let openQuestions = [];
 
 
-
 /* =========================================================
    HTML ELEMENT
    ========================================================= */
 
-
 const $ = id =>
   document.getElementById(id);
-
 
 
 /* =========================================================
    ARRAY MISCHEN
    ========================================================= */
 
-
 function shuffle(array){
 
   const arr = [...array];
-
 
   for(
     let i = arr.length - 1;
@@ -502,23 +547,19 @@ function shuffle(array){
         Math.random() * (i + 1)
       );
 
-
     [arr[i],arr[j]] =
       [arr[j],arr[i]];
 
   }
-
 
   return arr;
 
 }
 
 
-
 /* =========================================================
    CSV PARSER
    ========================================================= */
-
 
 function parseCSV(text){
 
@@ -653,11 +694,9 @@ function parseCSV(text){
 }
 
 
-
 /* =========================================================
    GOOGLE SHEET IN QUIZZES UMWANDELN
    ========================================================= */
-
 
 function buildQuizzes(csv){
 
@@ -713,7 +752,7 @@ function buildQuizzes(csv){
 
 
   /*
-   * Zusätzliche Spalten für Zuordnungsfragen
+   * Zuordnungsspalten
    */
 
   const matchAIndex =
@@ -762,80 +801,43 @@ function buildQuizzes(csv){
 
 
         /*
-         * Normale Antworten A bis E
+         * Normale Antwortmöglichkeiten
          */
 
         const options = [];
 
 
-        if(
-          aIndex !== -1 &&
-          row[aIndex] &&
-          row[aIndex].trim() !== ""
-        ){
-
-          options.push({
-            id:"A",
-            text:row[aIndex].trim()
-          });
-
-        }
+        const normalColumns = [
+          [aIndex,"A"],
+          [bIndex,"B"],
+          [cIndex,"C"],
+          [dIndex,"D"],
+          [eIndex,"E"]
+        ];
 
 
-        if(
-          bIndex !== -1 &&
-          row[bIndex] &&
-          row[bIndex].trim() !== ""
-        ){
+        normalColumns.forEach(
+          ([index,id]) => {
 
-          options.push({
-            id:"B",
-            text:row[bIndex].trim()
-          });
+            if(
+              index !== -1 &&
+              row[index] &&
+              row[index].trim() !== ""
+            ){
 
-        }
+              options.push({
 
+                id:id,
 
-        if(
-          cIndex !== -1 &&
-          row[cIndex] &&
-          row[cIndex].trim() !== ""
-        ){
+                text:
+                  row[index].trim()
 
-          options.push({
-            id:"C",
-            text:row[cIndex].trim()
-          });
+              });
 
-        }
+            }
 
-
-        if(
-          dIndex !== -1 &&
-          row[dIndex] &&
-          row[dIndex].trim() !== ""
-        ){
-
-          options.push({
-            id:"D",
-            text:row[dIndex].trim()
-          });
-
-        }
-
-
-        if(
-          eIndex !== -1 &&
-          row[eIndex] &&
-          row[eIndex].trim() !== ""
-        ){
-
-          options.push({
-            id:"E",
-            text:row[eIndex].trim()
-          });
-
-        }
+          }
+        );
 
 
         /*
@@ -871,11 +873,17 @@ function buildQuizzes(csv){
         ){
 
           const terms = [
+
             [aIndex,matchAIndex],
+
             [bIndex,matchBIndex],
+
             [cIndex,matchCIndex],
+
             [dIndex,matchDIndex],
+
             [eIndex,matchEIndex]
+
           ];
 
 
@@ -893,7 +901,8 @@ function buildQuizzes(csv){
 
                   id:
                     String.fromCharCode(
-                      65 + matching.length
+                      65 +
+                      matching.length
                     ),
 
                   term:
@@ -1030,11 +1039,9 @@ function buildQuizzes(csv){
 }
 
 
-
 /* =========================================================
    CACHE LADEN
    ========================================================= */
-
 
 function loadFromCache(){
 
@@ -1089,11 +1096,9 @@ function loadFromCache(){
 }
 
 
-
 /* =========================================================
    GOOGLE SHEET AKTUALISIEREN
    ========================================================= */
-
 
 async function updateFromGoogle(){
 
@@ -1147,20 +1152,10 @@ async function updateFromGoogle(){
 
 
     localStorage.setItem(
-
       CACHE_KEY,
-
-      JSON.stringify(
-        QUIZZES
-      )
-
+      JSON.stringify(QUIZZES)
     );
 
-
-    /*
-     * Nur aktualisieren,
-     * wenn wir auf der Startseite sind.
-     */
 
     if(
       !$('home').classList.contains(
@@ -1239,11 +1234,9 @@ async function updateFromGoogle(){
 }
 
 
-
 /* =========================================================
    START
    ========================================================= */
-
 
 function init(){
 
@@ -1266,11 +1259,9 @@ function init(){
 init();
 
 
-
 /* =========================================================
    SEITEN WECHSELN
    ========================================================= */
-
 
 function show(id){
 
@@ -1292,11 +1283,9 @@ function show(id){
 }
 
 
-
 /* =========================================================
    HOME
    ========================================================= */
-
 
 function showHome(){
 
@@ -1307,11 +1296,9 @@ function showHome(){
 }
 
 
-
 /* =========================================================
    QUIZ AUSWAHL
    ========================================================= */
-
 
 function renderHome(){
 
@@ -1395,11 +1382,9 @@ function renderHome(){
 }
 
 
-
 /* =========================================================
    QUIZ STARTEN
    ========================================================= */
-
 
 function startQuiz(id){
 
@@ -1461,8 +1446,10 @@ function startQuiz(id){
             ...q,
 
             matching:
-              shuffle(
-                q.matching
+              q.matching.map(
+                item => ({
+                  ...item
+                })
               )
 
           };
@@ -1566,11 +1553,9 @@ function startQuiz(id){
 }
 
 
-
 /* =========================================================
    FRAGE ANZEIGEN
    ========================================================= */
-
 
 function renderQuestion(){
 
@@ -1601,6 +1586,16 @@ function renderQuestion(){
 
   $('question').textContent =
     q.question;
+
+
+  $('nextBtn').textContent =
+
+    current ===
+    currentQuiz.questions.length - 1
+
+      ? 'Ergebnis anzeigen'
+
+      : 'Weiter';
 
 
   /*
@@ -1644,79 +1639,153 @@ function renderQuestion(){
   ){
 
     $('typeHint').textContent =
-      "Ordne jeden Begriff der richtigen Antwort zu";
+      "Schreibe den Buchstaben der richtigen Antwort in das Feld";
 
 
-    const answerOptions =
+    /*
+     * Antwortmöglichkeiten mischen
+     */
+
+    const answers =
       shuffle(
-        q.matching.map(
-          x =>
-            x.answer
-        )
+        q.matching
       );
 
 
-    $('options').innerHTML =
+    /*
+     * Buchstaben A, B, C usw.
+     * für die gemischten Antworten
+     */
 
-      q.matching
+    const answerMap =
+      answers.map(
+        (item,index) => ({
 
-        .map(
-          (item,index) => `
+          letter:
+            String.fromCharCode(
+              65 + index
+            ),
 
-            <div class="matching-row">
+          answer:
+            item.answer,
 
-              <div class="matching-term">
+          originalId:
+            item.id
 
-                ${escapeHtml(
-                  item.term
-                )}
-
-              </div>
-
-
-              <select
-                class="matching-select"
-                data-index="${index}"
-                onchange="checkMatching()"
-              >
-
-                <option value="">
-                  Bitte auswählen ...
-                </option>
+        })
+      );
 
 
-                ${
-                  answerOptions
+    /*
+     * Für diese Frage speichern,
+     * damit später bewertet werden kann.
+     */
 
-                    .map(
-                      answer => `
+    q.answerMap =
+      answerMap;
 
-                        <option
-                          value="${escapeAttr(
-                            answer
-                          )}"
-                        >
 
-                          ${escapeHtml(
-                            answer
-                          )}
+    /*
+     * Begriffe anzeigen
+     */
 
-                        </option>
+    let html = `
 
-                      `
-                    )
+      <div class="matching-list">
 
-                    .join('')
-                }
+    `;
 
-              </select>
+
+    q.matching.forEach(
+      (item,index) => {
+
+        html += `
+
+          <div class="matching-row">
+
+            <div class="matching-term">
+
+              ${escapeHtml(
+                item.term
+              )}
 
             </div>
 
-          `
-        )
 
-        .join('');
+            <input
+
+              class="matching-input"
+
+              type="text"
+
+              maxlength="1"
+
+              autocomplete="off"
+
+              data-index="${index}"
+
+              oninput="handleMatchingInput(this)"
+
+            >
+
+          </div>
+
+        `;
+
+      }
+    );
+
+
+    html += `
+
+      </div>
+
+
+      <div class="matching-answers">
+
+        <h3>
+
+          Antwortmöglichkeiten
+
+        </h3>
+
+    `;
+
+
+    answerMap.forEach(
+      item => {
+
+        html += `
+
+          <div class="matching-answer">
+
+            <span class="matching-letter">
+
+              ${item.letter}
+
+            </span>
+
+            ${escapeHtml(
+              item.answer
+            )}
+
+          </div>
+
+        `;
+
+      }
+    );
+
+
+    html += `
+
+      </div>
+
+    `;
+
+
+    $('options').innerHTML =
+      html;
 
 
     $('nextBtn').disabled =
@@ -1800,24 +1869,76 @@ function renderQuestion(){
   $('nextBtn').disabled =
     true;
 
+}
 
-  $('nextBtn').textContent =
 
-    current ===
-    currentQuiz.questions.length - 1
+/* =========================================================
+   ZUORDNUNG EINGABE
+   ========================================================= */
 
-      ? 'Ergebnis anzeigen'
+function handleMatchingInput(input){
 
-      : 'Weiter';
+  input.value =
+    input.value
+      .toUpperCase()
+      .replace(
+        /[^A-Z]/g,
+        ""
+      )
+      .slice(0,1);
+
+
+  const inputs =
+    [
+      ...document.querySelectorAll(
+        '.matching-input'
+      )
+    ];
+
+
+  const allFilled =
+    inputs.every(
+      x =>
+        x.value.trim() !== ""
+    );
+
+
+  /*
+   * Prüfen, ob nur gültige Buchstaben
+   * verwendet wurden.
+   */
+
+  const q =
+    currentQuiz.questions[current];
+
+
+  const validLetters =
+    q.answerMap.map(
+      x =>
+        x.letter
+    );
+
+
+  const allValid =
+    inputs.every(
+      x =>
+        validLetters.includes(
+          x.value
+        )
+    );
+
+
+  $('nextBtn').disabled =
+    !allFilled ||
+    !allValid;
 
 }
 
 
 
 /* =========================================================
-   OFFENE FRAGE PRÜFEN
+   OFFENE FRAGE
    ========================================================= */
-
 
 function checkOpenAnswer(){
 
@@ -1841,38 +1962,8 @@ function checkOpenAnswer(){
 
 
 /* =========================================================
-   ZUORDNUNG PRÜFEN
+   SINGLE / MULTI
    ========================================================= */
-
-
-function checkMatching(){
-
-  const selects =
-    [
-      ...document.querySelectorAll(
-        '.matching-select'
-      )
-    ];
-
-
-  const allSelected =
-    selects.every(
-      select =>
-        select.value !== ""
-    );
-
-
-  $('nextBtn').disabled =
-    !allSelected;
-
-}
-
-
-
-/* =========================================================
-   SINGLE / MULTI ANTWORT
-   ========================================================= */
-
 
 function choose(input){
 
@@ -1946,7 +2037,6 @@ function choose(input){
    NÄCHSTE FRAGE
    ========================================================= */
 
-
 function nextQuestion(){
 
   const q =
@@ -2010,7 +2100,6 @@ function nextQuestion(){
   }
 
 
-
   /*
    * ZUORDNUNGSFRAGE
    */
@@ -2019,11 +2108,10 @@ function nextQuestion(){
     q.type === "matching"
   ){
 
-    const selects =
-
+    const inputs =
       [
         ...document.querySelectorAll(
-          '.matching-select'
+          '.matching-input'
         )
       ];
 
@@ -2037,8 +2125,40 @@ function nextQuestion(){
     q.matching.forEach(
       (item,index) => {
 
-        const chosen =
-          selects[index].value;
+        const chosenLetter =
+          inputs[index]
+            ? inputs[index]
+                .value
+                .toUpperCase()
+            : "";
+
+
+        const selectedAnswer =
+          q.answerMap.find(
+            x =>
+              x.letter ===
+              chosenLetter
+          );
+
+
+        const chosenText =
+          selectedAnswer
+            ? selectedAnswer.answer
+            : "";
+
+
+        const isCorrect =
+
+          selectedAnswer &&
+          selectedAnswer.originalId ===
+          item.id;
+
+
+        if(isCorrect){
+
+          correctCount++;
+
+        }
 
 
         userMatches.push({
@@ -2047,21 +2167,15 @@ function nextQuestion(){
             item.term,
 
           chosen:
-            chosen,
+            chosenText,
+
+          chosenLetter:
+            chosenLetter,
 
           correct:
             item.answer
 
         });
-
-
-        if(
-          chosen === item.answer
-        ){
-
-          correctCount++;
-
-        }
 
       }
     );
@@ -2119,7 +2233,6 @@ function nextQuestion(){
     return;
 
   }
-
 
 
   /*
@@ -2201,49 +2314,13 @@ function nextQuestion(){
    ERGEBNIS
    ========================================================= */
 
-
 function showResult(){
 
   show('result');
 
 
   /*
-   * Maximale Punkte
-   */
-
-  const max =
-
-    currentQuiz.questions.reduce(
-
-      (sum,q) => {
-
-        if(
-          q.type === "matching"
-        ){
-
-          return (
-            sum +
-            q.matching.length
-          );
-
-        }
-
-
-        return (
-          sum +
-          (q.points || 1)
-        );
-
-      },
-
-      0
-
-    );
-
-
-  /*
-   * Offene Fragen werden nicht
-   * automatisch in die Punktzahl eingerechnet.
+   * Automatische maximale Punkte
    */
 
   const automaticMax =
@@ -2337,9 +2414,8 @@ function showResult(){
 
 
 /* =========================================================
-   FALSCHE FRAGEN ANZEIGEN
+   FALSCHE FRAGEN
    ========================================================= */
-
 
 function renderWrongQuestions(){
 
@@ -2347,7 +2423,7 @@ function renderWrongQuestions(){
 
 
   /*
-   * Falsche Single / Multi Fragen
+   * SINGLE / MULTI
    */
 
   wrongQuestions
@@ -2358,7 +2434,7 @@ function renderWrongQuestions(){
     )
 
     .forEach(
-      (item,index) => {
+      item => {
 
         html += `
 
@@ -2484,7 +2560,7 @@ function renderWrongQuestions(){
 
 
   /*
-   * Falsche Zuordnungen
+   * ZUORDNUNGSFRAGEN
    */
 
   wrongQuestions
@@ -2537,12 +2613,7 @@ function renderWrongQuestions(){
                 .map(
                   match => `
 
-                    <div
-                      style="
-                        padding:8px 0;
-                        border-top:1px solid #fecaca;
-                      "
-                    >
+                    <div class="result-match">
 
                       <b>
 
@@ -2554,10 +2625,18 @@ function renderWrongQuestions(){
 
                       →
 
-                      ${escapeHtml(
-                        match.chosen ||
-                        "Keine Antwort"
-                      )}
+                      ${
+                        match.chosen
+
+                          ? escapeHtml(
+                              match.chosenLetter +
+                              " " +
+                              match.chosen
+                            )
+
+                          : "Keine Antwort"
+
+                      }
 
 
                       ${
@@ -2604,11 +2683,11 @@ function renderWrongQuestions(){
 
 
   /*
-   * Offene Fragen
+   * OFFENE FRAGEN
    */
 
   openQuestions.forEach(
-    (item,index) => {
+    item => {
 
       html += `
 
@@ -2695,7 +2774,7 @@ function renderWrongQuestions(){
 
 
   /*
-   * Alles richtig und keine offenen Fragen
+   * Alles richtig
    */
 
   if(
@@ -2739,7 +2818,6 @@ function renderWrongQuestions(){
    NEU STARTEN
    ========================================================= */
 
-
 function restart(){
 
   startQuiz(
@@ -2753,7 +2831,6 @@ function restart(){
 /* =========================================================
    HTML SICHER ESCAPEN
    ========================================================= */
-
 
 function escapeHtml(s){
 
