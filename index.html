@@ -5,123 +5,808 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#111827">
 <title>Quiz Training</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f3f4f6;color:#111827}
-.app{max-width:720px;margin:auto;min-height:100vh;padding:20px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-h1{font-size:30px;margin:8px 0}h2{font-size:22px;margin:8px 0}.muted{color:#6b7280}
-.card{background:white;border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 5px 20px #0000000d}
-.btn{width:100%;border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:700;cursor:pointer;background:#111827;color:white;margin-top:12px}
-.btn.secondary{background:#e5e7eb;color:#111827}.btn:disabled{opacity:.45;cursor:not-allowed}
-.option{display:flex;align-items:flex-start;gap:12px;padding:14px;border:2px solid #e5e7eb;border-radius:12px;margin:10px 0;cursor:pointer}
-.option.selected{border-color:#111827;background:#f9fafb}.option input{margin-top:3px;transform:scale(1.2)}
-.progress{height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin:15px 0}.bar{height:100%;background:#111827;width:0}
-.badge{display:inline-block;background:#e5e7eb;border-radius:99px;padding:5px 9px;font-size:12px;font-weight:700}
-.score{font-size:48px;font-weight:800;text-align:center;margin:20px 0}
-.hidden{display:none}.row{display:flex;gap:10px}.row .btn{flex:1}
-.small{font-size:13px}.correct{border-color:#16a34a!important;background:#f0fdf4}.wrong{border-color:#dc2626!important;background:#fef2f2}
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  background:#f3f4f6;
+  color:#111827
+}
+
+.app{
+  max-width:720px;
+  margin:auto;
+  min-height:100vh;
+  padding:20px
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px
+}
+
+h1{
+  font-size:30px;
+  margin:8px 0
+}
+
+h2{
+  font-size:22px;
+  margin:8px 0
+}
+
+.muted{
+  color:#6b7280
+}
+
+.card{
+  background:white;
+  border-radius:18px;
+  padding:20px;
+  margin:14px 0;
+  box-shadow:0 5px 20px #0000000d
+}
+
+.btn{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:14px 16px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  background:#111827;
+  color:white;
+  margin-top:12px
+}
+
+.btn.secondary{
+  background:#e5e7eb;
+  color:#111827
+}
+
+.btn:disabled{
+  opacity:.45;
+  cursor:not-allowed
+}
+
+.option{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:14px;
+  border:2px solid #e5e7eb;
+  border-radius:12px;
+  margin:10px 0;
+  cursor:pointer
+}
+
+.option.selected{
+  border-color:#111827;
+  background:#f9fafb
+}
+
+.option input{
+  margin-top:3px;
+  transform:scale(1.2)
+}
+
+.progress{
+  height:8px;
+  background:#e5e7eb;
+  border-radius:99px;
+  overflow:hidden;
+  margin:15px 0
+}
+
+.bar{
+  height:100%;
+  background:#111827;
+  width:0
+}
+
+.badge{
+  display:inline-block;
+  background:#e5e7eb;
+  border-radius:99px;
+  padding:5px 9px;
+  font-size:12px;
+  font-weight:700
+}
+
+.score{
+  font-size:48px;
+  font-weight:800;
+  text-align:center;
+  margin:20px 0
+}
+
+.hidden{
+  display:none
+}
+
+.row{
+  display:flex;
+  gap:10px
+}
+
+.row .btn{
+  flex:1
+}
+
+.small{
+  font-size:13px
+}
+
+.correct{
+  border-color:#16a34a!important;
+  background:#f0fdf4
+}
+
+.wrong{
+  border-color:#dc2626!important;
+  background:#fef2f2
+}
 </style>
 </head>
+
 <body>
+
 <div class="app">
-  <div class="top"><div><span class="badge">Quiz Training</span><h1 id="title">Meine Quizze</h1></div></div>
+
+  <div class="top">
+    <div>
+      <span class="badge">Quiz Training</span>
+      <h1 id="title">Meine Quizze</h1>
+    </div>
+  </div>
+
+
+  <!-- QUIZ AUSWAHL -->
 
   <section id="home">
-    <p class="muted">Wähle ein Quiz. Weitere Quizze und Fragen können später in der Datei <b>quizzes.js</b> ergänzt werden.</p>
+
+    <p class="muted">
+      Wähle ein Quiz. Weitere Quizze und Fragen können später in der Datei
+      <b>quizzes.js</b> ergänzt werden.
+    </p>
+
     <div id="quizList"></div>
+
   </section>
+
+
+  <!-- QUIZ -->
 
   <section id="quiz" class="hidden">
-    <button class="btn secondary" onclick="showHome()">← Quiz-Auswahl</button>
+
+    <button class="btn secondary" onclick="showHome()">
+      ← Quiz-Auswahl
+    </button>
+
     <div class="card">
+
       <div class="muted" id="counter"></div>
-      <div class="progress"><div class="bar" id="bar"></div></div>
+
+      <div class="progress">
+        <div class="bar" id="bar"></div>
+      </div>
+
       <h2 id="question"></h2>
+
       <div class="muted small" id="typeHint"></div>
+
       <div id="options"></div>
-      <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Weiter</button>
+
+      <button
+        class="btn"
+        id="nextBtn"
+        onclick="nextQuestion()"
+        disabled
+      >
+        Weiter
+      </button>
+
     </div>
+
   </section>
+
+
+  <!-- ERGEBNIS -->
 
   <section id="result" class="hidden">
+
     <div class="card">
+
       <h2 id="resultTitle"></h2>
+
       <div class="score" id="score"></div>
-      <p id="resultText" class="muted" style="text-align:center"></p>
-      <button class="btn" onclick="restart()">Noch einmal</button>
-      <button class="btn secondary" onclick="showHome()">Zur Quiz-Auswahl</button>
+
+      <p
+        id="resultText"
+        class="muted"
+        style="text-align:center"
+      ></p>
+
+      <button class="btn" onclick="restart()">
+        Noch einmal
+      </button>
+
+      <button class="btn secondary" onclick="showHome()">
+        Zur Quiz-Auswahl
+      </button>
+
     </div>
+
   </section>
+
 </div>
 
+
 <script src="quizzes.js"></script>
+
 <script>
-let currentQuiz=null,current=0,points=0,selected=[];
+
+/* =========================================================
+   QUIZ-VARIABLEN
+   ========================================================= */
+
+let currentQuiz=null;
+let current=0;
+let points=0;
+let selected=[];
+
+
+/* =========================================================
+   HILFSFUNKTION: ARRAY ZUFÄLLIG MISCHEN
+   ========================================================= */
+
+function shuffle(array){
+
+  const arr=[...array];
+
+  for(let i=arr.length-1;i>0;i--){
+
+    const j=Math.floor(Math.random()*(i+1));
+
+    [arr[i],arr[j]]=[arr[j],arr[i];
+
+  }
+
+  return arr;
+}
+
+
+/* =========================================================
+   HTML ELEMENT KURZ AUFRUFEN
+   ========================================================= */
+
 const $=id=>document.getElementById(id);
 
-function show(id){['home','quiz','result'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
-function showHome(){show('home');renderHome();}
+
+/* =========================================================
+   SEITEN WECHSELN
+   ========================================================= */
+
+function show(id){
+
+  ['home','quiz','result'].forEach(x=>{
+
+    $(x).classList.toggle(
+      'hidden',
+      x!==id
+    );
+
+  });
+
+}
+
+
+/* =========================================================
+   ZUR QUIZ-AUSWAHL
+   ========================================================= */
+
+function showHome(){
+
+  show('home');
+
+  renderHome();
+
+}
+
+
+/* =========================================================
+   QUIZ-AUSWAHL ANZEIGEN
+   ========================================================= */
 
 function renderHome(){
+
   $('title').textContent='Meine Quizze';
-  $('quizList').innerHTML=QUIZZES.filter(q=>q.active!==false).map(q=>`
-    <div class="card">
-      <h2>${escapeHtml(q.title)}</h2>
-      <p class="muted">${escapeHtml(q.description||'')}</p>
-      <span class="badge">${q.questions.length} Fragen</span>
-      <button class="btn" onclick="startQuiz('${q.id}')">Starten</button>
-    </div>`).join('');
+
+  $('quizList').innerHTML=
+    QUIZZES
+      .filter(q=>q.active!==false)
+      .map(q=>`
+
+        <div class="card">
+
+          <h2>
+            ${escapeHtml(q.title)}
+          </h2>
+
+          <p class="muted">
+            ${escapeHtml(q.description||'')}
+          </p>
+
+          <span class="badge">
+            ${q.questions.length} Fragen
+          </span>
+
+          <button
+            class="btn"
+            onclick="startQuiz('${q.id}')"
+          >
+            Starten
+          </button>
+
+        </div>
+
+      `)
+      .join('');
+
 }
+
+
+/* =========================================================
+   QUIZ STARTEN
+   ========================================================= */
+
 function startQuiz(id){
-  currentQuiz=QUIZZES.find(q=>q.id===id);current=0;points=0;selected=[];
-  $('title').textContent=currentQuiz.title;show('quiz');renderQuestion();
-}
-function renderQuestion(){
-  const q=currentQuiz.questions[current];
+
+  /*
+   * Originales Quiz aus QUIZZES holen
+   */
+
+  const originalQuiz=QUIZZES.find(
+    q=>q.id===id
+  );
+
+
+  /*
+   * Neue Kopie des Quiz erstellen.
+   *
+   * Wichtig:
+   * Das Original in quizzes.js wird NICHT verändert.
+   */
+
+  currentQuiz={
+
+    ...originalQuiz,
+
+    /*
+     * Fragen zufällig mischen
+     */
+
+    questions:shuffle(originalQuiz.questions).map(q=>{
+
+      /*
+       * Antwortmöglichkeiten zufällig mischen
+       */
+
+      const shuffledOptions=shuffle(q.options);
+
+
+      /*
+       * Neue IDs A, B, C, D vergeben
+       */
+
+      const newOptions=
+        shuffledOptions.map((option,index)=>({
+
+          ...option,
+
+          id:String.fromCharCode(65+index)
+
+        }));
+
+
+      /*
+       * Herausfinden, welche neue ID
+       * zur ursprünglichen richtigen Antwort gehört.
+       */
+
+      const newCorrect=
+        shuffledOptions
+
+          .map((option,index)=>({
+
+            oldId:option.id,
+
+            newId:String.fromCharCode(65+index)
+
+          }))
+
+          .filter(x=>
+            q.correct.includes(x.oldId)
+          )
+
+          .map(x=>x.newId);
+
+
+      /*
+       * Neue Frage zurückgeben
+       */
+
+      return{
+
+        ...q,
+
+        options:newOptions,
+
+        correct:newCorrect
+
+      };
+
+    })
+
+  };
+
+
+  /*
+   * Quiz zurücksetzen
+   */
+
+  current=0;
+  points=0;
   selected=[];
-  $('counter').textContent=`Frage ${current+1} von ${currentQuiz.questions.length}`;
-  $('bar').style.width=((current)/currentQuiz.questions.length*100)+'%';
+
+
+  /*
+   * Quiz anzeigen
+   */
+
+  $('title').textContent=currentQuiz.title;
+
+  show('quiz');
+
+  renderQuestion();
+
+}
+
+
+/* =========================================================
+   AKTUELLE FRAGE ANZEIGEN
+   ========================================================= */
+
+function renderQuestion(){
+
+  const q=currentQuiz.questions[current];
+
+  selected=[];
+
+
+  /*
+   * Fortschritt / Zähler
+   */
+
+  $('counter').textContent=
+    `Frage ${current+1} von ${currentQuiz.questions.length}`;
+
+
+  /*
+   * Fortschrittsbalken
+   */
+
+  $('bar').style.width=
+    ((current)/currentQuiz.questions.length*100)+'%';
+
+
+  /*
+   * Frage anzeigen
+   */
+
   $('question').textContent=q.question;
-  $('typeHint').textContent=q.type==='multi'?'Mehrere Antworten möglich':'Eine Antwort auswählen';
-  $('options').innerHTML=q.options.map((o,i)=>`
-    <label class="option" id="opt${i}">
-      <input type="${q.type==='multi'?'checkbox':'radio'}" name="answer"
-        value="${escapeAttr(o.id)}" onchange="choose(this)">
-      <span><b>${escapeHtml(o.id)}.</b> ${escapeHtml(o.text)}</span>
-    </label>`).join('');
+
+
+  /*
+   * Hinweis Single / Multi
+   */
+
+  $('typeHint').textContent=
+    q.type==='multi'
+      ?'Mehrere Antworten möglich'
+      :'Eine Antwort auswählen';
+
+
+  /*
+   * Antworten anzeigen
+   */
+
+  $('options').innerHTML=
+
+    q.options.map((o,i)=>`
+
+      <label
+        class="option"
+        id="opt${i}"
+      >
+
+        <input
+          type="${q.type==='multi'?'checkbox':'radio'}"
+          name="answer"
+          value="${escapeAttr(o.id)}"
+          onchange="choose(this)"
+        >
+
+        <span>
+          <b>${escapeHtml(o.id)}.</b>
+          ${escapeHtml(o.text)}
+        </span>
+
+      </label>
+
+    `).join('');
+
+
+  /*
+   * Weiter-Button deaktivieren
+   */
+
   $('nextBtn').disabled=true;
-  $('nextBtn').textContent=current===currentQuiz.questions.length-1?'Ergebnis anzeigen':'Weiter';
+
+
+  /*
+   * Text des Weiter-Buttons
+   */
+
+  $('nextBtn').textContent=
+    current===currentQuiz.questions.length-1
+      ?'Ergebnis anzeigen'
+      :'Weiter';
+
 }
+
+
+/* =========================================================
+   ANTWORT AUSWÄHLEN
+   ========================================================= */
+
 function choose(input){
+
   const q=currentQuiz.questions[current];
+
+
+  /*
+   * MULTI
+   */
+
   if(q.type==='multi'){
-    selected=[...document.querySelectorAll('input[name=answer]:checked')].map(x=>x.value);
-  }else selected=[input.value];
-  document.querySelectorAll('.option').forEach((el,i)=>{
-    const id=q.options[i].id;el.classList.toggle('selected',selected.includes(id));
-  });
-  $('nextBtn').disabled=selected.length===0;
+
+    selected=
+      [...document.querySelectorAll(
+        'input[name=answer]:checked'
+      )]
+      .map(x=>x.value);
+
+  }
+
+
+  /*
+   * SINGLE
+   */
+
+  else{
+
+    selected=[input.value];
+
+  }
+
+
+  /*
+   * Ausgewählte Antworten hervorheben
+   */
+
+  document
+    .querySelectorAll('.option')
+    .forEach((el,i)=>{
+
+      const id=q.options[i].id;
+
+      el.classList.toggle(
+        'selected',
+        selected.includes(id)
+      );
+
+    });
+
+
+  /*
+   * Weiter aktivieren
+   */
+
+  $('nextBtn').disabled=
+    selected.length===0;
+
 }
+
+
+/* =========================================================
+   NÄCHSTE FRAGE
+   ========================================================= */
+
 function nextQuestion(){
+
   const q=currentQuiz.questions[current];
-  const correct=[...q.correct].sort();
-  const chosen=[...selected].sort();
-  const ok=correct.length===chosen.length && correct.every((x,i)=>x===chosen[i]);
-  if(ok) points+=q.points||1;
+
+
+  /*
+   * Richtige Antworten sortieren
+   */
+
+  const correct=
+    [...q.correct].sort();
+
+
+  /*
+   * Ausgewählte Antworten sortieren
+   */
+
+  const chosen=
+    [...selected].sort();
+
+
+  /*
+   * Prüfen, ob die Antworten exakt übereinstimmen
+   */
+
+  const ok=
+    correct.length===chosen.length &&
+    correct.every(
+      (x,i)=>x===chosen[i]
+    );
+
+
+  /*
+   * Punkte vergeben
+   */
+
+  if(ok){
+
+    points+=q.points||1;
+
+  }
+
+
+  /*
+   * Zur nächsten Frage
+   */
+
   current++;
-  if(current>=currentQuiz.questions.length){showResult();}else renderQuestion();
+
+
+  /*
+   * Wenn alle Fragen beantwortet wurden:
+   * Ergebnis anzeigen
+   */
+
+  if(current>=currentQuiz.questions.length){
+
+    showResult();
+
+  }
+
+  else{
+
+    renderQuestion();
+
+  }
+
 }
+
+
+/* =========================================================
+   ERGEBNIS ANZEIGEN
+   ========================================================= */
+
 function showResult(){
+
   show('result');
-  const max=currentQuiz.questions.reduce((s,q)=>s+(q.points||1),0);
-  const pct=max?Math.round(points/max*100):0;
-  $('resultTitle').textContent=currentQuiz.title+' abgeschlossen';
-  $('score').textContent=`${points} / ${max}`;
-  $('resultText').textContent=`${pct}% richtig.`;
+
+
+  /*
+   * Maximale Punktzahl berechnen
+   */
+
+  const max=
+    currentQuiz.questions.reduce(
+      (s,q)=>s+(q.points||1),
+      0
+    );
+
+
+  /*
+   * Prozentzahl berechnen
+   */
+
+  const pct=
+    max
+      ?Math.round(points/max*100)
+      :0;
+
+
+  /*
+   * Ergebnis anzeigen
+   */
+
+  $('resultTitle').textContent=
+    currentQuiz.title+' abgeschlossen';
+
+
+  $('score').textContent=
+    `${points} / ${max}`;
+
+
+  $('resultText').textContent=
+    `${pct}% richtig.`;
+
 }
-function restart(){startQuiz(currentQuiz.id)}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function escapeAttr(s){return escapeHtml(s)}
+
+
+/* =========================================================
+   QUIZ NEU STARTEN
+   ========================================================= */
+
+function restart(){
+
+  /*
+   * startQuiz() erstellt jedes Mal
+   * eine komplett neue zufällige Reihenfolge.
+   */
+
+  startQuiz(currentQuiz.id);
+
+}
+
+
+/* =========================================================
+   SICHERHEIT: HTML ESCAPEN
+   ========================================================= */
+
+function escapeHtml(s){
+
+  return String(s).replace(
+    /[&<>"']/g,
+    m=>({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[m])
+  );
+
+}
+
+
+function escapeAttr(s){
+
+  return escapeHtml(s);
+
+}
+
+
+/* =========================================================
+   STARTSEITE LADEN
+   ========================================================= */
+
 renderHome();
+
 </script>
+
 </body>
 </html>
