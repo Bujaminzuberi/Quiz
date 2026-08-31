@@ -185,6 +185,47 @@ textarea:focus{
 
 
 /* =====================================================
+   MINICASE
+   ===================================================== */
+
+.case-box{
+  margin:18px 0;
+  padding:18px;
+  border:2px solid #e5e7eb;
+  border-radius:14px;
+  background:#f9fafb
+}
+
+.case-label{
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.05em;
+  color:#6b7280;
+  text-transform:uppercase;
+  margin-bottom:6px
+}
+
+.case-title{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:12px
+}
+
+.case-text{
+  line-height:1.6;
+  white-space:pre-wrap
+}
+
+.case-question{
+  margin-top:18px;
+  padding:14px;
+  border-left:4px solid #111827;
+  background:#f9fafb;
+  border-radius:0 10px 10px 0
+}
+
+
+/* =====================================================
    ZUORDNUNG
    ===================================================== */
 
@@ -204,11 +245,11 @@ textarea:focus{
 .matching-term{
   font-weight:700;
   font-size:15px;
-  line-height:1.3;
+  line-height:1.3
 }
 
 .matching-input{
- width:48px;
+  width:48px;
   height:38px;
   padding:0;
   text-align:center;
@@ -241,7 +282,7 @@ textarea:focus{
   line-height:1.3;
   font-size:14px
 }
-  
+
 .matching-letter{
   display:inline-flex;
   align-items:center;
@@ -254,7 +295,6 @@ textarea:focus{
   font-size:13px;
   font-weight:800
 }
-
 
 
 /* =====================================================
@@ -275,6 +315,11 @@ textarea:focus{
 .result-open{
   border:2px solid #fde68a;
   background:#fffbeb
+}
+
+.result-case{
+  border:2px solid #c7d2fe;
+  background:#eef2ff
 }
 
 .result-correct{
@@ -299,39 +344,71 @@ textarea:focus{
   border-top:1px solid #fecaca
 }
 
+.case-result-question{
+  margin-top:16px;
+  padding-top:12px;
+  border-top:1px solid #c7d2fe
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
 @media(max-width:600px){
 
-   grid-template-columns:minmax(0,1fr) 44px;
+  .app{
+    padding:14px
+  }
+
+  .card{
+    padding:16px
+  }
+
+  .matching-row{
+    grid-template-columns:minmax(0,1fr) 44px;
     gap:6px;
-    padding:7px 0;
+    padding:7px 0
   }
 
   .matching-term{
-    font-size:14px;
+    font-size:14px
   }
 
   .matching-input{
     width:44px;
     height:36px;
     font-size:15px;
-    border-radius:7px;
+    border-radius:7px
   }
 
   .matching-answers{
     margin-top:12px;
-    padding:10px;
+    padding:10px
   }
 
   .matching-answer{
     font-size:13px;
-    padding:4px 0;
+    padding:4px 0
   }
 
   .matching-letter{
     width:24px;
     height:24px;
     margin-right:5px;
-    font-size:12px;
+    font-size:12px
+  }
+
+  .case-box{
+    padding:14px
+  }
+
+  .case-title{
+    font-size:18px
+  }
+
+  .case-text{
+    font-size:15px
   }
 
 }
@@ -347,9 +424,7 @@ textarea:focus{
 <div class="app">
 
 
-  <!-- =====================================================
-       HEADER
-       ===================================================== -->
+  <!-- HEADER -->
 
   <div class="top">
 
@@ -368,9 +443,7 @@ textarea:focus{
   </div>
 
 
-  <!-- =====================================================
-       QUIZ AUSWAHL
-       ===================================================== -->
+  <!-- QUIZ AUSWAHL -->
 
   <section id="home">
 
@@ -403,9 +476,7 @@ textarea:focus{
   </section>
 
 
-  <!-- =====================================================
-       QUIZ
-       ===================================================== -->
+  <!-- QUIZ -->
 
   <section id="quiz" class="hidden">
 
@@ -437,6 +508,9 @@ textarea:focus{
       </div>
 
 
+      <div id="caseDisplay"></div>
+
+
       <h2 id="question"></h2>
 
 
@@ -464,9 +538,7 @@ textarea:focus{
   </section>
 
 
-  <!-- =====================================================
-       ERGEBNIS
-       ===================================================== -->
+  <!-- ERGEBNIS -->
 
   <section id="result" class="hidden">
 
@@ -534,7 +606,7 @@ const SHEET_URL =
    ========================================================= */
 
 const CACHE_KEY =
-  "quiz_training_questions_v2";
+  "quiz_training_questions_v3";
 
 
 /* =========================================================
@@ -554,6 +626,8 @@ let selected = [];
 let wrongQuestions = [];
 
 let openQuestions = [];
+
+let caseQuestions = [];
 
 
 /* =========================================================
@@ -631,14 +705,12 @@ function parseCSV(text){
 
     }
 
-
     else if(char === '"'){
 
       insideQuotes =
         !insideQuotes;
 
     }
-
 
     else if(
       char === ',' &&
@@ -652,7 +724,6 @@ function parseCSV(text){
       cell = "";
 
     }
-
 
     else if(
       (char === '\n' ||
@@ -692,7 +763,6 @@ function parseCSV(text){
 
     }
 
-
     else{
 
       cell += char;
@@ -731,7 +801,7 @@ function parseCSV(text){
 
 
 /* =========================================================
-   GOOGLE SHEET IN QUIZZES UMWANDELN
+   QUIZZES AUS GOOGLE SHEET ERSTELLEN
    ========================================================= */
 
 function buildQuizzes(csv){
@@ -787,9 +857,19 @@ function buildQuizzes(csv){
     headers.indexOf("points");
 
 
-  /*
-   * Zuordnungsspalten
-   */
+  /* CASE SPALTEN */
+
+  const caseIdIndex =
+    headers.indexOf("case_id");
+
+  const caseTitleIndex =
+    headers.indexOf("case_title");
+
+  const caseTextIndex =
+    headers.indexOf("case_text");
+
+
+  /* ZUORDNUNG */
 
   const matchAIndex =
     headers.indexOf("matcha");
@@ -836,19 +916,19 @@ function buildQuizzes(csv){
             : "single";
 
 
-        /*
-         * Normale Antwortmöglichkeiten
-         */
+        /* NORMALE ANTWORTEN */
 
         const options = [];
 
 
         const normalColumns = [
+
           [aIndex,"A"],
           [bIndex,"B"],
           [cIndex,"C"],
           [dIndex,"D"],
           [eIndex,"E"]
+
         ];
 
 
@@ -876,9 +956,7 @@ function buildQuizzes(csv){
         );
 
 
-        /*
-         * Richtige Antworten
-         */
+        /* RICHTIGE ANTWORTEN */
 
         const correct =
 
@@ -897,9 +975,7 @@ function buildQuizzes(csv){
             : [];
 
 
-        /*
-         * Zuordnungsdaten
-         */
+        /* ZUORDNUNG */
 
         const matching = [];
 
@@ -911,13 +987,9 @@ function buildQuizzes(csv){
           const terms = [
 
             [aIndex,matchAIndex],
-
             [bIndex,matchBIndex],
-
             [cIndex,matchCIndex],
-
             [dIndex,matchDIndex],
-
             [eIndex,matchEIndex]
 
           ];
@@ -957,15 +1029,49 @@ function buildQuizzes(csv){
         }
 
 
+        /* MINICASE */
+
+        const caseId =
+
+          caseIdIndex !== -1 &&
+          row[caseIdIndex]
+
+            ? row[caseIdIndex].trim()
+
+            : "";
+
+
+        const caseTitle =
+
+          caseTitleIndex !== -1 &&
+          row[caseTitleIndex]
+
+            ? row[caseTitleIndex].trim()
+
+            : "";
+
+
+        const caseText =
+
+          caseTextIndex !== -1 &&
+          row[caseTextIndex]
+
+            ? row[caseTextIndex].trim()
+
+            : "";
+
+
         return {
 
           quiz:
+
             row[quizIndex]
               ? row[quizIndex].trim()
               : "",
 
 
           question:
+
             row[questionIndex]
               ? row[questionIndex].trim()
               : "",
@@ -981,6 +1087,15 @@ function buildQuizzes(csv){
 
 
           matching:matching,
+
+
+          caseId:caseId,
+
+
+          caseTitle:caseTitle,
+
+
+          caseText:caseText,
 
 
           points:
@@ -1009,14 +1124,20 @@ function buildQuizzes(csv){
         q.question &&
 
         (
+
           q.type === "open" ||
+
+          q.type === "case" ||
 
           q.type === "matching" ||
 
           (
+
             q.options.length > 0 &&
             q.correct.length > 0
+
           )
+
         )
 
       );
@@ -1305,6 +1426,7 @@ function show(id){
     'home',
     'quiz',
     'result'
+
   ]
 
   .forEach(x => {
@@ -1452,9 +1574,7 @@ function startQuiz(id){
       .map(q => {
 
 
-        /*
-         * OFFENE FRAGE
-         */
+        /* OFFENE FRAGE */
 
         if(
           q.type === "open"
@@ -1469,9 +1589,22 @@ function startQuiz(id){
         }
 
 
-        /*
-         * ZUORDNUNGSFRAGE
-         */
+        /* MINICASE */
+
+        if(
+          q.type === "case"
+        ){
+
+          return {
+
+            ...q
+
+          };
+
+        }
+
+
+        /* ZUORDNUNG */
 
         if(
           q.type === "matching"
@@ -1493,9 +1626,7 @@ function startQuiz(id){
         }
 
 
-        /*
-         * SINGLE / MULTI
-         */
+        /* SINGLE / MULTI */
 
         const shuffledOptions =
           shuffle(
@@ -1577,6 +1708,8 @@ function startQuiz(id){
 
   openQuestions = [];
 
+  caseQuestions = [];
+
 
   $('title').textContent =
     currentQuiz.title;
@@ -1624,6 +1757,9 @@ function renderQuestion(){
     q.question;
 
 
+  $('caseDisplay').innerHTML = "";
+
+
   $('nextBtn').textContent =
 
     current ===
@@ -1634,24 +1770,95 @@ function renderQuestion(){
       : 'Weiter';
 
 
-  /*
-   * OFFENE FRAGE
-   */
+  /* =====================================================
+     MINICASE
+     ===================================================== */
 
   if(
-    q.type === "open"
+    q.type === "case"
   ){
 
     $('typeHint').textContent =
-      "Offene Frage";
+      "Minicase";
+
+
+    /*
+     * Situation anzeigen
+     */
+
+    if(
+      q.caseId
+    ){
+
+      $('caseDisplay').innerHTML = `
+
+        <div class="case-box">
+
+          <div class="case-label">
+
+            Situation
+
+          </div>
+
+
+          ${
+            q.caseTitle
+
+              ? `
+
+                <div class="case-title">
+
+                  ${escapeHtml(
+                    q.caseTitle
+                  )}
+
+                </div>
+
+              `
+
+              : ""
+
+          }
+
+
+          <div class="case-text">
+
+            ${escapeHtml(
+              q.caseText || ""
+            )}
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    $('question').innerHTML = `
+
+      <div class="case-question">
+
+        ${escapeHtml(
+          q.question
+        )}
+
+      </div>
+
+    `;
 
 
     $('options').innerHTML = `
 
       <textarea
-        id="openAnswer"
+
+        id="caseAnswer"
+
         placeholder="Schreibe deine Antwort hier ..."
-        oninput="checkOpenAnswer()"
+
+        oninput="checkCaseAnswer()"
+
       ></textarea>
 
     `;
@@ -1666,9 +1873,45 @@ function renderQuestion(){
   }
 
 
-  /*
-   * ZUORDNUNGSFRAGE
-   */
+  /* =====================================================
+     OFFENE FRAGE
+     ===================================================== */
+
+  if(
+    q.type === "open"
+  ){
+
+    $('typeHint').textContent =
+      "Offene Frage";
+
+
+    $('options').innerHTML = `
+
+      <textarea
+
+        id="openAnswer"
+
+        placeholder="Schreibe deine Antwort hier ..."
+
+        oninput="checkOpenAnswer()"
+
+      ></textarea>
+
+    `;
+
+
+    $('nextBtn').disabled =
+      true;
+
+
+    return;
+
+  }
+
+
+  /* =====================================================
+     ZUORDNUNG
+     ===================================================== */
 
   if(
     q.type === "matching"
@@ -1678,20 +1921,11 @@ function renderQuestion(){
       "Schreibe den Buchstaben der richtigen Antwort in das Feld";
 
 
-    /*
-     * Antwortmöglichkeiten mischen
-     */
-
     const answers =
       shuffle(
         q.matching
       );
 
-
-    /*
-     * Buchstaben A, B, C usw.
-     * für die gemischten Antworten
-     */
 
     const answerMap =
       answers.map(
@@ -1712,18 +1946,9 @@ function renderQuestion(){
       );
 
 
-    /*
-     * Für diese Frage speichern,
-     * damit später bewertet werden kann.
-     */
-
     q.answerMap =
       answerMap;
 
-
-    /*
-     * Begriffe anzeigen
-     */
 
     let html = `
 
@@ -1780,9 +2005,7 @@ function renderQuestion(){
       <div class="matching-answers">
 
         <h3>
-
           Antwortmöglichkeiten
-
         </h3>
 
     `;
@@ -1833,9 +2056,9 @@ function renderQuestion(){
   }
 
 
-  /*
-   * SINGLE / MULTI
-   */
+  /* =====================================================
+     SINGLE / MULTI
+     ===================================================== */
 
   $('typeHint').textContent =
 
@@ -1909,6 +2132,54 @@ function renderQuestion(){
 
 
 /* =========================================================
+   MINICASE ANTWORT PRÜFEN
+   ========================================================= */
+
+function checkCaseAnswer(){
+
+  const input =
+    $('caseAnswer');
+
+
+  if(!input){
+
+    return;
+
+  }
+
+
+  $('nextBtn').disabled =
+
+    input.value.trim().length === 0;
+
+}
+
+
+/* =========================================================
+   OFFENE FRAGE PRÜFEN
+   ========================================================= */
+
+function checkOpenAnswer(){
+
+  const input =
+    $('openAnswer');
+
+
+  if(!input){
+
+    return;
+
+  }
+
+
+  $('nextBtn').disabled =
+
+    input.value.trim().length === 0;
+
+}
+
+
+/* =========================================================
    ZUORDNUNG EINGABE
    ========================================================= */
 
@@ -1939,11 +2210,6 @@ function handleMatchingInput(input){
     );
 
 
-  /*
-   * Prüfen, ob nur gültige Buchstaben
-   * verwendet wurden.
-   */
-
   const q =
     currentQuiz.questions[current];
 
@@ -1969,32 +2235,6 @@ function handleMatchingInput(input){
     !allValid;
 
 }
-
-
-
-/* =========================================================
-   OFFENE FRAGE
-   ========================================================= */
-
-function checkOpenAnswer(){
-
-  const input =
-    $('openAnswer');
-
-
-  if(!input){
-
-    return;
-
-  }
-
-
-  $('nextBtn').disabled =
-
-    input.value.trim().length === 0;
-
-}
-
 
 
 /* =========================================================
@@ -2068,7 +2308,6 @@ function choose(input){
 }
 
 
-
 /* =========================================================
    NÄCHSTE FRAGE
    ========================================================= */
@@ -2079,9 +2318,72 @@ function nextQuestion(){
     currentQuiz.questions[current];
 
 
-  /*
-   * OFFENE FRAGE
-   */
+  /* =====================================================
+     MINICASE
+     ===================================================== */
+
+  if(
+    q.type === "case"
+  ){
+
+    const answer =
+      $('caseAnswer')
+        ? $('caseAnswer')
+            .value
+            .trim()
+        : "";
+
+
+    caseQuestions.push({
+
+      caseId:
+        q.caseId,
+
+      caseTitle:
+        q.caseTitle,
+
+      caseText:
+        q.caseText,
+
+      question:
+        q.question,
+
+      answer:
+        answer,
+
+      points:
+        q.points || 1
+
+    });
+
+
+    current++;
+
+
+    if(
+      current >=
+      currentQuiz.questions.length
+    ){
+
+      showResult();
+
+    }
+
+    else{
+
+      renderQuestion();
+
+    }
+
+
+    return;
+
+  }
+
+
+  /* =====================================================
+     OFFENE FRAGE
+     ===================================================== */
 
   if(
     q.type === "open"
@@ -2136,9 +2438,9 @@ function nextQuestion(){
   }
 
 
-  /*
-   * ZUORDNUNGSFRAGE
-   */
+  /* =====================================================
+     ZUORDNUNG
+     ===================================================== */
 
   if(
     q.type === "matching"
@@ -2271,9 +2573,9 @@ function nextQuestion(){
   }
 
 
-  /*
-   * SINGLE / MULTI
-   */
+  /* =====================================================
+     SINGLE / MULTI
+     ===================================================== */
 
   const correct =
     [...q.correct].sort();
@@ -2345,7 +2647,6 @@ function nextQuestion(){
 }
 
 
-
 /* =========================================================
    ERGEBNIS
    ========================================================= */
@@ -2355,10 +2656,6 @@ function showResult(){
   show('result');
 
 
-  /*
-   * Automatische maximale Punkte
-   */
-
   const automaticMax =
 
     currentQuiz.questions.reduce(
@@ -2366,7 +2663,8 @@ function showResult(){
       (sum,q) => {
 
         if(
-          q.type === "open"
+          q.type === "open" ||
+          q.type === "case"
         ){
 
           return sum;
@@ -2423,14 +2721,20 @@ function showResult(){
 
 
   if(
+    caseQuestions.length > 0 ||
     openQuestions.length > 0
   ){
+
+    let manualCount =
+      caseQuestions.length +
+      openQuestions.length;
+
 
     $('resultText').textContent =
 
       `${pct}% automatisch richtig. ` +
-      `${openQuestions.length} offene ` +
-      `Frage(n) müssen manuell bewertet werden.`;
+      `${manualCount} offene Antwort(en) ` +
+      `müssen manuell bewertet werden.`;
 
   }
 
@@ -2448,9 +2752,8 @@ function showResult(){
 }
 
 
-
 /* =========================================================
-   FALSCHE FRAGEN
+   ERGEBNIS DETAILS
    ========================================================= */
 
 function renderWrongQuestions(){
@@ -2458,9 +2761,9 @@ function renderWrongQuestions(){
   let html = "";
 
 
-  /*
-   * SINGLE / MULTI
-   */
+  /* =====================================================
+     SINGLE / MULTI
+     ===================================================== */
 
   wrongQuestions
 
@@ -2477,9 +2780,7 @@ function renderWrongQuestions(){
           <div class="result-box result-wrong">
 
             <h3>
-
               ❌ Falsche Frage
-
             </h3>
 
 
@@ -2497,9 +2798,7 @@ function renderWrongQuestions(){
 
 
             <div class="answer-label">
-
               Deine Antwort
-
             </div>
 
 
@@ -2544,9 +2843,7 @@ function renderWrongQuestions(){
 
 
             <div class="answer-label">
-
               Richtige Antwort
-
             </div>
 
 
@@ -2594,10 +2891,9 @@ function renderWrongQuestions(){
     );
 
 
-
-  /*
-   * ZUORDNUNGSFRAGEN
-   */
+  /* =====================================================
+     ZUORDNUNGSFRAGEN
+     ===================================================== */
 
   wrongQuestions
 
@@ -2614,9 +2910,7 @@ function renderWrongQuestions(){
           <div class="result-box result-wrong">
 
             <h3>
-
               ❌ Zuordnungsfrage
-
             </h3>
 
 
@@ -2717,10 +3011,9 @@ function renderWrongQuestions(){
     );
 
 
-
-  /*
-   * OFFENE FRAGEN
-   */
+  /* =====================================================
+     OFFENE FRAGEN
+     ===================================================== */
 
   openQuestions.forEach(
     item => {
@@ -2730,9 +3023,7 @@ function renderWrongQuestions(){
         <div class="result-box result-open">
 
           <h3>
-
             ✍️ Offene Frage
-
           </h3>
 
 
@@ -2750,9 +3041,7 @@ function renderWrongQuestions(){
 
 
           <div class="answer-label">
-
             Deine Antwort
-
           </div>
 
 
@@ -2772,9 +3061,7 @@ function renderWrongQuestions(){
 
 
           <div class="answer-label">
-
             Musterlösung
-
           </div>
 
 
@@ -2795,9 +3082,7 @@ function renderWrongQuestions(){
 
 
           <span class="badge">
-
             Manuell bewerten
-
           </span>
 
         </div>
@@ -2808,14 +3093,185 @@ function renderWrongQuestions(){
   );
 
 
+  /* =====================================================
+     MINICASE
+     ===================================================== */
 
-  /*
-   * Alles richtig
-   */
+  if(
+    caseQuestions.length > 0
+  ){
+
+    /*
+     * Cases gruppieren
+     */
+
+    const cases = {};
+
+
+    caseQuestions.forEach(
+      item => {
+
+        if(
+          !cases[item.caseId]
+        ){
+
+          cases[item.caseId] = {
+
+            title:
+              item.caseTitle,
+
+            text:
+              item.caseText,
+
+            questions:[]
+
+          };
+
+        }
+
+
+        cases[item.caseId]
+          .questions
+          .push(item);
+
+      }
+    );
+
+
+    Object.keys(cases)
+      .forEach(
+        caseId => {
+
+          const caseData =
+            cases[caseId];
+
+
+          html += `
+
+            <div class="result-box result-case">
+
+              <h3>
+                📋 Minicase
+              </h3>
+
+
+              <div class="case-title">
+
+                ${escapeHtml(
+                  caseData.title ||
+                  "Minicase"
+                )}
+
+              </div>
+
+
+              ${
+                caseData.text
+
+                  ? `
+
+                    <div class="case-text">
+
+                      ${escapeHtml(
+                        caseData.text
+                      )}
+
+                    </div>
+
+                  `
+
+                  : ""
+
+              }
+
+
+              ${
+                caseData.questions
+
+                  .map(
+                    (item,index) => `
+
+                      <div class="case-result-question">
+
+                        <div class="answer-label">
+
+                          Frage ${
+                            index + 1
+                          }
+
+                        </div>
+
+
+                        <p>
+
+                          <b>
+
+                            ${escapeHtml(
+                              item.question
+                            )}
+
+                          </b>
+
+                        </p>
+
+
+                        <div class="answer-label">
+
+                          Deine Antwort
+
+                        </div>
+
+
+                        <div class="answer-text">
+
+                          ${
+                            item.answer
+
+                              ? escapeHtml(
+                                  item.answer
+                                )
+
+                              : "Keine Antwort"
+                          }
+
+                        </div>
+
+
+                        <span class="badge">
+
+                          Manuell bewerten
+                          ·
+                          ${item.points} Punkte
+
+                        </span>
+
+                      </div>
+
+                    `
+                  )
+
+                  .join("")
+
+              }
+
+            </div>
+
+          `;
+
+        }
+      );
+
+  }
+
+
+  /* =====================================================
+     ALLES RICHTIG
+     ===================================================== */
 
   if(
     wrongQuestions.length === 0 &&
-    openQuestions.length === 0
+    openQuestions.length === 0 &&
+    caseQuestions.length === 0
   ){
 
     html = `
@@ -2823,9 +3279,7 @@ function renderWrongQuestions(){
       <div class="result-box result-correct">
 
         <h3>
-
           🎉 Alles richtig!
-
         </h3>
 
 
@@ -2849,7 +3303,6 @@ function renderWrongQuestions(){
 }
 
 
-
 /* =========================================================
    NEU STARTEN
    ========================================================= */
@@ -2861,7 +3314,6 @@ function restart(){
   );
 
 }
-
 
 
 /* =========================================================
@@ -2898,7 +3350,6 @@ function escapeAttr(s){
   return escapeHtml(s);
 
 }
-
 
 </script>
 
