@@ -262,7 +262,7 @@ let currentQuiz=null;
 let current=0;
 let points=0;
 let selected=[];
-
+let wrongQuestions=[];
 
 /* =========================================================
    HILFSFUNKTION: ARRAY ZUFÄLLIG MISCHEN
@@ -466,7 +466,7 @@ function startQuiz(id){
   current=0;
   points=0;
   selected=[];
-
+  wrongQuestions=[];
 
   /*
    * Quiz anzeigen
@@ -683,7 +683,25 @@ function nextQuestion(){
 
   }
 
+/*
+ * Falsch beantwortete Frage speichern
+ */
 
+else{
+
+  wrongQuestions.push({
+
+    question:q.question,
+
+    options:q.options,
+
+    correct:q.correct,
+
+    selected:selected
+
+  });
+
+}
   /*
    * Zur nächsten Frage
    */
@@ -755,6 +773,85 @@ function showResult(){
 
   $('resultText').textContent=
     `${pct}% richtig.`;
+
+  /*
+ * Falsche Fragen anzeigen
+ */
+
+if(wrongQuestions.length===0){
+
+  $('wrongQuestions').innerHTML=`
+    <div class="card">
+      <h2>🎉 Alles richtig!</h2>
+      <p class="muted">
+        Du hast alle Fragen richtig beantwortet.
+      </p>
+    </div>
+  `;
+
+}
+
+else{
+
+  $('wrongQuestions').innerHTML=`
+
+    <div class="card">
+
+      <h2>Falsch beantwortete Fragen</h2>
+
+      ${wrongQuestions.map((item,index)=>`
+
+        <div style="
+          border:2px solid #fee2e2;
+          background:#fef2f2;
+          border-radius:12px;
+          padding:14px;
+          margin:12px 0;
+        ">
+
+          <b>
+            ${index+1}. ${escapeHtml(item.question)}
+          </b>
+
+          <p class="small">
+            Deine Antwort:
+            <strong>
+              ${
+                item.selected.length
+                  ? item.selected.map(id=>{
+                      const option=item.options.find(o=>o.id===id);
+                      return option
+                        ? escapeHtml(id+'. '+option.text)
+                        : escapeHtml(id);
+                    }).join(', ')
+                  : 'Keine Antwort'
+              }
+            </strong>
+          </p>
+
+          <p class="small">
+            Richtige Antwort:
+            <strong>
+              ${
+                item.correct.map(id=>{
+                  const option=item.options.find(o=>o.id===id);
+                  return option
+                    ? escapeHtml(id+'. '+option.text)
+                    : escapeHtml(id);
+                }).join(', ')
+              }
+            </strong>
+          </p>
+
+        </div>
+
+      `).join('')}
+
+    </div>
+
+  `;
+
+}
 
 }
 
